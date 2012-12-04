@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" >
+
+    <property name="framework.name" value="Device Hive Android Framework" />
+    
+    <property name="dir.javadocs" value="../../Documents/javadoc" />
+    
+    <property name="dir.src" value="src" />
+    <property name="packages" value="com.dataart.android.devicehive.*"/>
+    
+
+    <target name="-post-build" >
+        
+        <delete dir="${dir.javadocs}" />
+
+        <mkdir dir="${dir.javadocs}" />
+
+        <javadoc
+            author="true"
+            classpath="${dir.src}"
+            destdir="${dir.javadocs}"
+            doctitle="&lt;h1>${framework.name}&lt;/h1>"
+            packagenames="${packages}"
+            sourcepath="${dir.src}"
+            use="true"
+            version="true"
+            windowtitle="${framework.name} API" />
+    </target>
+
+</project>

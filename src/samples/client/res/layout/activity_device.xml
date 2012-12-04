@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+                android:layout_weight="0.9">
+    <TextView
+        android:id="@+id/log_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical" >
+
+        <EditText
+            android:id="@+id/command_name_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:ems="10" >
+        </EditText>
+
+        <Button
+            android:id="@+id/send_command_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="Send Command" />
+    </LinearLayout>
+
+</LinearLayout>

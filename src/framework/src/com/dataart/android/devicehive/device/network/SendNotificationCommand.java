@@ -1,0 +1,80 @@
+package com.dataart.android.devicehive.device.network;
+
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.dataart.android.devicehive.DeviceData;
+import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
+import com.google.gson.Gson;
+
+public class SendNotificationCommand extends DeviceCommand {
+
+	private final static String NAMESPACE = SendNotificationCommand.class
+			.getName();
+
+	private static final String NOTIFICATION_DATA_KEY = NAMESPACE
+			.concat(".NOTIFICATION_DATA_KEY");
+
+	private final Notification notification;
+
+	public SendNotificationCommand(DeviceData deviceData,
+			Notification notification) {
+		super(deviceData);
+		this.notification = notification;
+	}
+
+	public Notification getNotification() {
+		return notification;
+	}
+
+	@Override
+	protected RequestType getRequestType() {
+		return RequestType.POST;
+	}
+
+	@Override
+	protected String getRequestPath() {
+		return String.format("device/%s/notification", getEncodedDeviceId());
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
+		dest.writeParcelable(notification, 0);
+	}
+
+	public static Parcelable.Creator<SendNotificationCommand> CREATOR = new Parcelable.Creator<SendNotificationCommand>() {
+
+		@Override
+		public SendNotificationCommand[] newArray(int size) {
+			return new SendNotificationCommand[size];
+		}
+
+		@Override
+		public SendNotificationCommand createFromParcel(Parcel source) {
+			return new SendNotificationCommand(
+					(DeviceData) source.readParcelable(CLASS_LOADER),
+					(Notification) source.readParcelable(CLASS_LOADER));
+		}
+	};
+
+	@Override
+	protected String toJson(Gson gson) {
+		return gson.toJson(notification);
+	}
+
+	@Override
+	protected int fromJson(final String response, final Gson gson,
+			final Bundle resultData) {
+		final Notification notification = gson.fromJson(response,
+				Notification.class);
+		resultData.putParcelable(NOTIFICATION_DATA_KEY, notification);
+		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
+	}
+
+	public final static Notification getNotification(Bundle resultData) {
+		return resultData.getParcelable(NOTIFICATION_DATA_KEY);
+	}
+}
