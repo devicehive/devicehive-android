@@ -10,6 +10,11 @@ import com.dataart.android.devicehive.device.CommandResult;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
 
+/**
+ * Update status of given command with given {@link #commandResult}. As a result
+ * returns updated {@link Command} instance returned by the server.
+ * 
+ */
 public class UpdateCommandStatusCommand extends DeviceCommand {
 
 	private final static String NAMESPACE = UpdateCommandStatusCommand.class

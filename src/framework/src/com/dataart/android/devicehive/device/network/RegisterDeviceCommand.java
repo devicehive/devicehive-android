@@ -8,6 +8,11 @@ import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
 
+/**
+ * Register a new device which parameters are described by given
+ * {@link DeviceData} instance.
+ * 
+ */
 public class RegisterDeviceCommand extends DeviceCommand {
 
 	private final static String NAMESPACE = RegisterDeviceCommand.class

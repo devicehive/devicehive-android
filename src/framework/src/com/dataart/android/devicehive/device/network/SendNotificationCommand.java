@@ -9,6 +9,11 @@ import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
 
+/**
+ * Send a new notification from the given device. As a result returns
+ * {@link Notification} instance from the server response.
+ * 
+ */
 public class SendNotificationCommand extends DeviceCommand {
 
 	private final static String NAMESPACE = SendNotificationCommand.class

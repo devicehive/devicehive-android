@@ -13,6 +13,9 @@ import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+/**
+ * Abstract base class for command retrieval-related commands.
+ */
 public abstract class DeviceCommandsRetrivalCommand extends DeviceCommand {
 
 	private final static String NAMESPACE = DeviceCommandsRetrivalCommand.class
@@ -54,7 +57,7 @@ public abstract class DeviceCommandsRetrivalCommand extends DeviceCommand {
 	public final static List<Command> getCommands(Bundle resultData) {
 		return resultData.getParcelableArrayList(COMMANDS_KEY);
 	}
-	
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);

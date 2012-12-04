@@ -9,7 +9,6 @@ import com.dataart.android.devicehive.network.JsonNetworkCommand;
 
 /**
  * Base command for Device Hive device-related commands.
- * 
  */
 public abstract class DeviceCommand extends JsonNetworkCommand {
 

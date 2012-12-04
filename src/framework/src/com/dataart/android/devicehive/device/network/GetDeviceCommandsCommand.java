@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 import com.dataart.android.devicehive.DeviceData;
 
+/**
+ * Get commands for given device starting from given date timestamp. Server
+ * returns response immediately regardless of whether there are any commands for
+ * given device.
+ */
 public class GetDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 
 	public GetDeviceCommandsCommand(DeviceData deviceData,

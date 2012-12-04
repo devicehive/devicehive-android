@@ -5,6 +5,11 @@ import android.os.Parcelable;
 
 import com.dataart.android.devicehive.DeviceData;
 
+/**
+ * Poll for commands for given device starting from given date timestamp. In the
+ * case when no commands were found, the server doesn't return response until a
+ * new command is received. The blocking period is limited.
+ */
 public class PollDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 
 	public PollDeviceCommandsCommand(DeviceData deviceData,
