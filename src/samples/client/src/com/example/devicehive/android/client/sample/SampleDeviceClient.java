@@ -16,6 +16,8 @@ public class SampleDeviceClient extends DeviceClient {
 	private static final String TAG = "SampleDeviceClient";
 
 	private final List<NotificationsListener> notificationListeners = new LinkedList<NotificationsListener>();
+	
+	private final List<CommandListener> commandListeners = new LinkedList<CommandListener>();
 
 	public SampleDeviceClient(Context context, DeviceData deviceData) {
 		super(context, deviceData);
@@ -31,6 +33,20 @@ public class SampleDeviceClient extends DeviceClient {
 
 	public void removeNotificationsListener(NotificationsListener listener) {
 		notificationListeners.remove(listener);
+	}
+	
+	public interface CommandListener {
+		void onStartSendindCommand(Command command);
+		void onFinishSendindCommand(Command command);
+		void onFailSendindCommand(Command command);
+	}
+	
+	public void addCommandListener(CommandListener listener) {
+		commandListeners.add(listener);
+	}
+
+	public void removeCommandListener(CommandListener listener) {
+		commandListeners.remove(listener);
 	}
 
 	@Override
@@ -58,21 +74,42 @@ public class SampleDeviceClient extends DeviceClient {
 	@Override
 	protected void onStartSendingCommand(Command command) {
 		Log.d(TAG, "onStartSendingCommand: " + command);
+		notifyCommandListenersStartSending(command);
 	}
 
 	@Override
 	protected void onFinishSendingCommand(Command command) {
 		Log.d(TAG, "onFinishSendingCommand: " + command);
+		notifyCommandListenersFinishSending(command);
 	}
 
 	@Override
 	protected void onFailSendingCommand(Command command) {
 		Log.d(TAG, "onFailSendingCommand: " + command);
+		notifyCommandListenersFailSending(command);
 	}
 
 	private void notifyNotificationListeners(Notification notification) {
 		for (NotificationsListener listener : notificationListeners) {
 			listener.onReceviceNotification(notification);
+		}
+	}
+	
+	private void notifyCommandListenersStartSending(Command command) {
+		for (CommandListener listener : commandListeners) {
+			listener.onStartSendindCommand(command);
+		}
+	}
+	
+	private void notifyCommandListenersFinishSending(Command command) {
+		for (CommandListener listener : commandListeners) {
+			listener.onFinishSendindCommand(command);
+		}
+	}
+	
+	private void notifyCommandListenersFailSending(Command command) {
+		for (CommandListener listener : commandListeners) {
+			listener.onFailSendindCommand(command);
 		}
 	}
 

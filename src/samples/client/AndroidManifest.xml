@@ -32,6 +32,14 @@
             android:name=".DeviceActivity" >
         </activity>
         
+         <activity
+            android:name=".DeviceNotificationsActivity" >
+        </activity>
+        
+         <activity
+            android:name=".DeviceSendCommandActivity" >
+        </activity>
+
         <service 
           android:name="com.dataart.android.devicehive.network.DeviceHiveApiService"
           android:exported="false"/>

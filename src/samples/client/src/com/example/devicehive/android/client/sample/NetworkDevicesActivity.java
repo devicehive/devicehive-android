@@ -61,7 +61,6 @@ public class NetworkDevicesActivity extends BaseActivity {
 								.getAdapter();
 						final DeviceData device = (DeviceData) adapter
 								.getItem(position);
-						// start communicating with the device
 						DeviceActivity.start(NetworkDevicesActivity.this,
 								device);
 					}

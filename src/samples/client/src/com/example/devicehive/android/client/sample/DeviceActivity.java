@@ -1,23 +1,15 @@
 package com.example.devicehive.android.client.sample;
 
-import java.util.HashMap;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
-import com.dataart.android.devicehive.Notification;
-import com.example.devicehive.android.client.sample.SampleDeviceClient.NotificationsListener;
 
-public class DeviceActivity extends BaseActivity implements
-		NotificationsListener {
+public class DeviceActivity extends BaseActivity {
 
 	private static final String EXTRA_DEVICE = DeviceActivity.class.getName()
 			+ ".EXTRA_DEVICE";
@@ -33,22 +25,44 @@ public class DeviceActivity extends BaseActivity implements
 	private DeviceData device;
 	private SampleDeviceClient deviceClient;
 
-	private TextView logTextView;
 	private Button sendCommandButton;
-	private EditText commandNameEdit;
+	private Button viewNotificationsButton;
+
+	private TextView deviceIdTextView;
+	private TextView deviceStatusTextView;
+
+	private TextView deviceClassNameTextView;
+	private TextView deviceClassVersionTextView;
+	private TextView deviceClassIsPermanentTextView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_device);
 
-		logTextView = (TextView) findViewById(R.id.log_text_view);
 		sendCommandButton = (Button) findViewById(R.id.send_command_button);
-		commandNameEdit = (EditText) findViewById(R.id.command_name_editText);
+		viewNotificationsButton = (Button) findViewById(R.id.view_notifications_button);
+
+		deviceIdTextView = (TextView) findViewById(R.id.device_id_text_view);
+		deviceStatusTextView = (TextView) findViewById(R.id.device_status_text_view);
+
+		deviceClassNameTextView = (TextView) findViewById(R.id.device_class_name_text_view);
+		deviceClassVersionTextView = (TextView) findViewById(R.id.device_class_version_text_view);
+		deviceClassIsPermanentTextView = (TextView) findViewById(R.id.device_class_is_permanent_text_view);
+
 		sendCommandButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				sendCommand();
+				startActivity(new Intent(DeviceActivity.this,
+						DeviceSendCommandActivity.class));
+			}
+		});
+
+		viewNotificationsButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(DeviceActivity.this,
+						DeviceNotificationsActivity.class));
 			}
 		});
 
@@ -59,43 +73,17 @@ public class DeviceActivity extends BaseActivity implements
 		}
 		setTitle(device.getName());
 
+		deviceIdTextView.setText(device.getId());
+		deviceStatusTextView.setText(device.getStatus());
+
+		deviceClassNameTextView.setText(device.getDeviceClass().getName());
+		deviceClassVersionTextView
+				.setText(device.getDeviceClass().getVersion());
+		deviceClassIsPermanentTextView.setText(""
+				+ device.getDeviceClass().isPermanent());
+
 		SampleClientApplication app = (SampleClientApplication) getApplication();
 		deviceClient = app.setupClientForDevice(device);
-		deviceClient.removeNotificationsListener(this);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		deviceClient.addNotificationsListener(this);
-		deviceClient.startReceivingNotifications();
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		deviceClient.stopReceivingNotifications();
-		deviceClient.removeNotificationsListener(this);
-	}
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-	}
-
-	@Override
-	public void onReceviceNotification(Notification notification) {
-		logTextView.append(notification.toString() + "\n");
-	}
-
-	private void sendCommand() {
-		String command = commandNameEdit.getText().toString();
-		if (TextUtils.isEmpty(command)) {
-			command = "TestCommandAndroidFramework";
-		}
-		final HashMap<String, Object> parameters = new HashMap<String, Object>();
-		parameters.put("equipment", "Echo iOS Equipment code");
-		deviceClient.sendCommand(new Command(command, parameters));
 	}
 
 }
