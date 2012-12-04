@@ -4,14 +4,25 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.os.ResultReceiver;
 
 /**
  * Network command execution configuration data.
  */
 public class NetworkCommandConfig implements Parcelable {
+
+	/**
+	 * Server URL without path component.
+	 */
 	public final String baseUrl;
-	public final ResultReceiver resultReceiver;
+
+	/**
+	 * Result receiver to receive messages from the service.
+	 */
+	public final DeviceHiveResultReceiver resultReceiver;
+
+	/**
+	 * Whether debug logging is enabled or not.
+	 */
 	public final boolean isDebugLoggingEnabled;
 
 	private String username;
@@ -21,8 +32,8 @@ public class NetworkCommandConfig implements Parcelable {
 			.getClassLoader();
 
 	/* package */NetworkCommandConfig(String baseUrl,
-			ResultReceiver resultReceiver, boolean isDebugLoggingEnabled,
-			String username, String password) {
+			DeviceHiveResultReceiver resultReceiver,
+			boolean isDebugLoggingEnabled, String username, String password) {
 		this.baseUrl = baseUrl;
 		this.resultReceiver = resultReceiver;
 		this.isDebugLoggingEnabled = isDebugLoggingEnabled;
@@ -106,7 +117,8 @@ public class NetworkCommandConfig implements Parcelable {
 	public static final Parcelable.Creator<NetworkCommandConfig> CREATOR = new Parcelable.Creator<NetworkCommandConfig>() {
 		public NetworkCommandConfig createFromParcel(Parcel source) {
 			return new NetworkCommandConfig(source.readString(),
-					(ResultReceiver) source.readParcelable(CLASS_LOADER),
+					(DeviceHiveResultReceiver) source
+							.readParcelable(CLASS_LOADER),
 					source.readInt() > 0, source.readString(),
 					source.readString());
 		}
