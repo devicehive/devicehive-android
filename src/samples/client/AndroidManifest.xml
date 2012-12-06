@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".NetworksActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/title_activity_main"
+            android:configChanges="orientation" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,19 +26,23 @@
         </activity>
         
         <activity
-            android:name=".NetworkDevicesActivity" >
+            android:name=".NetworkDevicesActivity"
+            android:configChanges="orientation" >
         </activity>
         
          <activity
-            android:name=".DeviceActivity" >
+            android:name=".DeviceActivity"
+            android:configChanges="orientation" >
         </activity>
         
          <activity
-            android:name=".DeviceNotificationsActivity" >
+            android:name=".DeviceNotificationsActivity"
+            android:configChanges="orientation" >
         </activity>
         
          <activity
-            android:name=".DeviceSendCommandActivity" >
+            android:name=".DeviceSendCommandActivity"
+            android:configChanges="orientation" >
         </activity>
 
         <service 

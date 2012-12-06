@@ -18,14 +18,24 @@ public class TestDevice extends Device {
 
 	private static final String TAG = "TestDevice";
 
-	private List<TestDeviceListener> listeners = new LinkedList<TestDeviceListener>();
+	private List<RegistrationListener> registrationListeners = new LinkedList<RegistrationListener>();
+	private List<CommandListener> commandListeners = new LinkedList<CommandListener>();
+	private List<NotificationListener> notificationListeners = new LinkedList<NotificationListener>();
 
-	public interface TestDeviceListener {
-		void testDeviceReceivedCommand(Command command);
+	public interface RegistrationListener {
+		void onDeviceRegistered();
 
-		void testDeviceRegistered();
+		void onDeviceFailedToRegister();
+	}
 
-		void testDeviceFailedToRegister();
+	public interface CommandListener {
+		void onDeviceReceivedCommand(Command command);
+	}
+
+	public interface NotificationListener {
+		void onDeviceSentNotification(Notification notification);
+
+		void onDeviceFailedToSendNotification(Notification notification);
 	}
 
 	public TestDevice(Context context) {
@@ -54,9 +64,9 @@ public class TestDevice extends Device {
 	@Override
 	public CommandResult runCommand(final Command command) {
 		Log.d(TAG, "Executing command on test device: " + command.getCommand());
-		
+
 		// execute command
-		
+
 		if (shouldRunCommandAsynchronously(command)) {
 			runOnMainThread(new Runnable() {
 				@Override
@@ -76,12 +86,34 @@ public class TestDevice extends Device {
 		return true;
 	}
 
-	public void addDeviceListener(TestDeviceListener listener) {
-		listeners.add(listener);
+	public void addDeviceListener(RegistrationListener listener) {
+		registrationListeners.add(listener);
 	}
 
-	public void removeDeviceListener(TestDeviceListener listener) {
-		listeners.remove(listener);
+	public void removeDeviceListener(RegistrationListener listener) {
+		registrationListeners.remove(listener);
+	}
+
+	public void addCommandListener(CommandListener listener) {
+		commandListeners.add(listener);
+	}
+
+	public void removeCommandListener(CommandListener listener) {
+		commandListeners.remove(listener);
+	}
+
+	public void addNotificationListener(NotificationListener listener) {
+		notificationListeners.add(listener);
+	}
+
+	public void removeNotificationListener(NotificationListener listener) {
+		notificationListeners.remove(listener);
+	}
+
+	public void removeListener(Object listener) {
+		registrationListeners.remove(listener);
+		commandListeners.remove(listener);
+		notificationListeners.remove(listener);
 	}
 
 	@Override
@@ -119,28 +151,43 @@ public class TestDevice extends Device {
 	@Override
 	protected void onFinishSendingNotification(Notification notification) {
 		Log.d(TAG, "onFinishSendingNotification : " + notification.getName());
+		notifyListenersDeviceSentNotification(notification);
 	}
 
 	@Override
 	protected void onFailSendingNotification(Notification notification) {
 		Log.d(TAG, "onFailSendingNotification : " + notification.getName());
+		notifyListenersDeviceFailedToSendNotification(notification);
 	}
 
 	private void notifyListenersCommandReceived(Command command) {
-		for (TestDeviceListener listener : listeners) {
-			listener.testDeviceReceivedCommand(command);
+		for (CommandListener listener : commandListeners) {
+			listener.onDeviceReceivedCommand(command);
 		}
 	}
 
 	private void notifyListenersDeviceRegistered() {
-		for (TestDeviceListener listener : listeners) {
-			listener.testDeviceRegistered();
+		for (RegistrationListener listener : registrationListeners) {
+			listener.onDeviceRegistered();
 		}
 	}
 
 	private void notifyListenersDeviceFailedToRegister() {
-		for (TestDeviceListener listener : listeners) {
-			listener.testDeviceFailedToRegister();
+		for (RegistrationListener listener : registrationListeners) {
+			listener.onDeviceFailedToRegister();
+		}
+	}
+
+	private void notifyListenersDeviceSentNotification(Notification notification) {
+		for (NotificationListener listener : notificationListeners) {
+			listener.onDeviceSentNotification(notification);
+		}
+	}
+
+	private void notifyListenersDeviceFailedToSendNotification(
+			Notification notification) {
+		for (NotificationListener listener : notificationListeners) {
+			listener.onDeviceFailedToSendNotification(notification);
 		}
 	}
 
