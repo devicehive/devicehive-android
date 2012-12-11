@@ -33,8 +33,8 @@ public class SampleClientApplication extends Application {
 		SampleDeviceClient client = new SampleDeviceClient(
 				getApplicationContext(), device);
 		client.setApiEnpointUrl(DeviceHiveConfig.API_ENDPOINT);
-		client.setAuthorisation(DeviceHiveConfig.CLIENT_USERNAME,
-				DeviceHiveConfig.CLIENT_PASSWORD);
+		final SampleClientPreferences prefs = new SampleClientPreferences(this);
+		client.setAuthorisation(prefs.getUsername(), prefs.getPassword());
 		client.setDebugLoggingEnabled(BuildConfig.DEBUG);
 		return client;
 	}

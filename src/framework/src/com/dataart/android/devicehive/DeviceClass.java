@@ -49,7 +49,7 @@ public class DeviceClass implements Parcelable {
 	 *            Device class version.
 	 */
 	public DeviceClass(String name, String version) {
-		this(-1, name, version, false, 0);
+		this(-1, name, version, false, -1);
 	}
 
 	/**

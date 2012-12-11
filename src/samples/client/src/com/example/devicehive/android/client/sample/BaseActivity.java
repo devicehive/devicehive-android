@@ -44,8 +44,9 @@ public class BaseActivity extends Activity {
 		final NetworkCommandConfig config = new NetworkCommandConfig(
 				DeviceHiveConfig.API_ENDPOINT, getResultReceiver(),
 				BuildConfig.DEBUG);
-		config.setBasicAuthorisation(DeviceHiveConfig.CLIENT_USERNAME,
-				DeviceHiveConfig.CLIENT_PASSWORD);
+		
+		final SampleClientPreferences prefs = new SampleClientPreferences(this);
+		config.setBasicAuthorisation(prefs.getUsername(), prefs.getPassword());
 		return config;
 	}
 

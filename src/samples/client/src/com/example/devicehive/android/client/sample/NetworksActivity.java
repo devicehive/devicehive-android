@@ -2,7 +2,13 @@ package com.example.devicehive.android.client.sample;
 
 import java.util.List;
 
+import org.apache.http.auth.MalformedChallengeException;
+import org.apache.http.client.ClientProtocolException;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -117,6 +123,7 @@ public class NetworksActivity extends BaseActivity {
 
 	}
 
+	@Override
 	protected void onReceiveResult(final int resultCode, final int tagId,
 			final Bundle resultData) {
 		switch (resultCode) {
@@ -124,6 +131,10 @@ public class NetworksActivity extends BaseActivity {
 			final Throwable exception = DeviceClientCommand
 					.getThrowable(resultData);
 			Log.e(TAG, "Failed to execute network command", exception);
+			if (exception instanceof ClientProtocolException
+					&& exception.getCause() instanceof MalformedChallengeException) {
+				showAuthDialog();
+			}
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
 			int statusCode = DeviceClientCommand.getStatusCode(resultData);
@@ -142,6 +153,24 @@ public class NetworksActivity extends BaseActivity {
 			}
 			break;
 		}
+	}
+
+	private void showAuthDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		final AlertDialog dialog = builder
+				.setTitle("Authentication error!")
+				.setMessage("Looks like your credentials are not valid.")
+				.setPositiveButton("Reenter credentials",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								startActivity(new Intent(NetworksActivity.this,
+										AuthActivity.class));
+								finish();
+							}
+						}).create();
+		dialog.show();
 	}
 
 	private static final int TAG_GET_NETWORKS = getTagId(GetNetworksCommand.class);
