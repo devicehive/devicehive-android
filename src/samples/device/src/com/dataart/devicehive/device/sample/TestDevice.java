@@ -46,16 +46,16 @@ public class TestDevice extends Device {
 	private static DeviceData getTestDeviceData() {
 
 		final Network network = new Network(
-				"Test Android Network(Device Framwork)",
-				"Test Android Device Network(Device Framwork)");
+				"Test Android Network(Device Framework)",
+				"Test Android Device Network(Device Framework)");
 
 		final DeviceClass deviceClass = new DeviceClass(
-				"Test Android Device Class(Device Framwork)", "1.0");
+				"Test Android Device Class(Device Framework)", "1.0");
 
 		final DeviceData deviceData = new DeviceData(
 				"89A9435A-8DA6-4856-9061-31521A01FBD9",
 				"4D6B0A4A-CA77-4944-AAB0-52A7FE3DBD75",
-				"Test Android Device(Device Framwork)",
+				"Test Android Device(Device Framework)",
 				DeviceData.DEVICE_STATUS_ONLINE, network, deviceClass);
 
 		return deviceData;
