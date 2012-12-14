@@ -10,6 +10,9 @@ public class SampleClientPreferences {
 
 	private final Context context;
 	private final SharedPreferences preferences;
+	
+	private final static String KEY_SERVER_URL = NAMESPACE
+			.concat(".KEY_SERVER_URL");
 
 	private final static String KEY_USERNAME = NAMESPACE
 			.concat(".KEY_USERNAME");
@@ -23,6 +26,10 @@ public class SampleClientPreferences {
 				context.getPackageName() + "_devicehiveprefs",
 				Context.MODE_PRIVATE);
 	}
+	
+	public String getServerUrl() {
+		return preferences.getString(KEY_SERVER_URL, null);
+	}
 
 	public String getUsername() {
 		return preferences.getString(KEY_USERNAME, null);
@@ -30,6 +37,12 @@ public class SampleClientPreferences {
 
 	public String getPassword() {
 		return preferences.getString(KEY_PASSWORD, null);
+	}
+	
+	public void setServerUrlSync(String serverUrl) {
+		SharedPreferences.Editor editor = preferences.edit();
+		editor.putString(KEY_SERVER_URL, serverUrl);
+		editor.commit();
 	}
 
 	public void setCredentialsSync(String username, String password) {

@@ -41,11 +41,16 @@ public class BaseActivity extends Activity {
 	}
 
 	protected NetworkCommandConfig getNetworkCommandConfig() {
-		final NetworkCommandConfig config = new NetworkCommandConfig(
-				DeviceHiveConfig.API_ENDPOINT, getResultReceiver(),
-				BuildConfig.DEBUG);
-		
+
 		final SampleClientPreferences prefs = new SampleClientPreferences(this);
+		String serverUrl = prefs.getServerUrl();
+		if (serverUrl == null) {
+			serverUrl = DeviceHiveConfig.API_ENDPOINT;
+			prefs.setServerUrlSync(serverUrl);
+		}
+		final NetworkCommandConfig config = new NetworkCommandConfig(serverUrl,
+				getResultReceiver(), BuildConfig.DEBUG);
+
 		config.setBasicAuthorisation(prefs.getUsername(), prefs.getPassword());
 		return config;
 	}

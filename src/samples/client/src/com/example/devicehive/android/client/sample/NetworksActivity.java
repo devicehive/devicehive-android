@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -68,6 +69,19 @@ public class NetworksActivity extends BaseActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_settings) {
+			startSettingsActivity();
+			return true;
+		}
+		return false;
+	}
+
+	private void startSettingsActivity() {
+		startActivity(new Intent(this, SettingsActivity.class));
 	}
 
 	private static class NetworksAdapter extends BaseAdapter {
@@ -133,13 +147,18 @@ public class NetworksActivity extends BaseActivity {
 			Log.e(TAG, "Failed to execute network command", exception);
 			if (exception instanceof ClientProtocolException
 					&& exception.getCause() instanceof MalformedChallengeException) {
-				showAuthDialog();
+				showDialog("Authentication error!", "Looks like your credentials are not valid.");
+			} else {
+				showDialog("Error", "Failed to connect to the server.");
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
 			int statusCode = DeviceClientCommand.getStatusCode(resultData);
 			Log.e(TAG, "Failed to execute network command. Status code: "
 					+ statusCode);
+			if (statusCode == 404) {
+				showDialog("Error", "Failed to connect to the server.");
+			}
 			break;
 		case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
 			if (tagId == TAG_GET_NETWORKS) {
@@ -155,19 +174,25 @@ public class NetworksActivity extends BaseActivity {
 		}
 	}
 
-	private void showAuthDialog() {
+	private void showDialog(String title, String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final AlertDialog dialog = builder
-				.setTitle("Authentication error!")
-				.setMessage("Looks like your credentials are not valid.")
-				.setPositiveButton("Reenter credentials",
+				.setTitle(title)
+				.setMessage(message)
+				.setPositiveButton("Edit settings",
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								startActivity(new Intent(NetworksActivity.this,
-										AuthActivity.class));
-								finish();
+								startSettingsActivity();
+							}
+						})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								dialog.dismiss();
 							}
 						}).create();
 		dialog.show();
