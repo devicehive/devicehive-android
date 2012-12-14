@@ -1,5 +1,7 @@
 package com.example.devicehive.android.client.sample;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -150,6 +152,13 @@ public class NetworkDevicesActivity extends BaseActivity {
 						.getNetworkDevices(resultData);
 				Log.d(TAG, "Fetched devices: " + devices);
 				if (devices != null) {
+					Collections.sort(devices, new Comparator<DeviceData>() {
+						@Override
+						public int compare(DeviceData lhs, DeviceData rhs) {
+							return lhs.getName().compareToIgnoreCase(
+									rhs.getName());
+						}
+					});
 					networkDevicesListView
 							.setAdapter(new NetworkDevicesAdapter(this, devices));
 				}

@@ -1,5 +1,7 @@
 package com.example.devicehive.android.client.sample;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.http.auth.MalformedChallengeException;
@@ -147,7 +149,8 @@ public class NetworksActivity extends BaseActivity {
 			Log.e(TAG, "Failed to execute network command", exception);
 			if (exception instanceof ClientProtocolException
 					&& exception.getCause() instanceof MalformedChallengeException) {
-				showDialog("Authentication error!", "Looks like your credentials are not valid.");
+				showDialog("Authentication error!",
+						"Looks like your credentials are not valid.");
 			} else {
 				showDialog("Error", "Failed to connect to the server.");
 			}
@@ -166,6 +169,13 @@ public class NetworksActivity extends BaseActivity {
 						.getNetworks(resultData);
 				Log.d(TAG, "Fetched networks: " + networks);
 				if (networks != null) {
+					Collections.sort(networks, new Comparator<Network>() {
+						@Override
+						public int compare(Network lhs, Network rhs) {
+							return lhs.getName().compareToIgnoreCase(
+									rhs.getName());
+						}
+					});
 					networksListView.setAdapter(new NetworksAdapter(this,
 							networks));
 				}
