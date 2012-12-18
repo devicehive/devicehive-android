@@ -60,23 +60,19 @@ public class TestDevice extends Device {
 
 		return deviceData;
 	}
+	
+	@Override
+	public void onBeforeRunCommand(Command command) {
+		Log.d(TAG, "onBeforeRunCommand: " + command.getCommand());
+		notifyListenersCommandReceived(command);
+	}
 
 	@Override
 	public CommandResult runCommand(final Command command) {
 		Log.d(TAG, "Executing command on test device: " + command.getCommand());
-
+		
 		// execute command
-
-		if (shouldRunCommandAsynchronously(command)) {
-			runOnMainThread(new Runnable() {
-				@Override
-				public void run() {
-					notifyListenersCommandReceived(command);
-				}
-			});
-		} else {
-			notifyListenersCommandReceived(command);
-		}
+		
 		return new CommandResult(CommandResult.STATUS_COMLETED,
 				"Executed on Android test device!");
 	}

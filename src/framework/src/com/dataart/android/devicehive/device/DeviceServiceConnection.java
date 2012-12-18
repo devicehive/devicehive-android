@@ -99,6 +99,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private void executeNextCommand() {
 		final Command command = commandQueue.poll();
 		if (command != null) {
+			device.onBeforeRunCommand(command);
 			final Map<String, Object> parameters = command.getParameters();
 			if (parameters == null
 					|| !parameters.containsKey(EQUIPMENT_PARAMETER)) {
@@ -108,6 +109,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 						.getEquipmentWithCode((String) parameters
 								.get(EQUIPMENT_PARAMETER));
 				if (equipment != null) {
+					equipment.onBeforeRunCommand(command);
 					runCommandOnRunner(equipment, command);
 				} else {
 					updateCommandStatus(command, new CommandResult(

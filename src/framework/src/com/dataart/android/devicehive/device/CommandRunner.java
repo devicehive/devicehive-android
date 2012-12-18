@@ -7,6 +7,17 @@ import com.dataart.android.devicehive.Command;
  * {@link Device} and {@link Equipment}.
  */
 public interface CommandRunner {
+
+	/**
+	 * Called right before command is executed either by the device itself or
+	 * one of its equipment. This method is called for the device before each
+	 * command execution (either by the device itself or one of its equipment).
+	 * 
+	 * @param command
+	 *            {@link Command} to be executed.
+	 */
+	void onBeforeRunCommand(Command command);
+
 	/**
 	 * Check whether receiver of the command should execute command on some
 	 * other thread, not on the main (UI) thread.

@@ -19,6 +19,11 @@ public class TestEquipment extends Equipment {
 		return new EquipmentData("Test Android Equipment",
 				"Test Android Equipment code", "Test Android Equipment type");
 	}
+	
+	@Override
+	public void onBeforeRunCommand(Command command) {
+		Log.d(TAG, "onBeforeRunCommand: " + command.getCommand());
+	}
 
 	@Override
 	public boolean shouldRunCommandAsynchronously(final Command command) {
@@ -28,6 +33,9 @@ public class TestEquipment extends Equipment {
 	@Override
 	public CommandResult runCommand(final Command command) {
 		Log.d(TAG, "runCommand: " + command.getCommand());
+		
+		// run command
+		
 		return new CommandResult(CommandResult.STATUS_COMLETED,
 				"Executed on Android test equipment!");
 	}
