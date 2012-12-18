@@ -18,6 +18,8 @@ public class SampleDeviceClient extends DeviceClient {
 	private final List<NotificationsListener> notificationListeners = new LinkedList<NotificationsListener>();
 	
 	private final List<CommandListener> commandListeners = new LinkedList<CommandListener>();
+	
+	private final List<DeviceDataListener> deviceDataListeners = new LinkedList<DeviceDataListener>();
 
 	public SampleDeviceClient(Context context, DeviceData deviceData) {
 		super(context, deviceData);
@@ -33,6 +35,19 @@ public class SampleDeviceClient extends DeviceClient {
 
 	public void removeNotificationsListener(NotificationsListener listener) {
 		notificationListeners.remove(listener);
+	}
+	
+	public interface DeviceDataListener {
+		void onReloadDeviceDataFinished();
+		void onReloadDeviceDataFailed();
+	}
+	
+	public void addDeviceDataListener(DeviceDataListener listener) {
+		deviceDataListeners.add(listener);
+	}
+
+	public void removeDeviceDataListener(DeviceDataListener listener) {
+		deviceDataListeners.remove(listener);
 	}
 	
 	public interface CommandListener {
@@ -88,6 +103,16 @@ public class SampleDeviceClient extends DeviceClient {
 		Log.d(TAG, "onFailSendingCommand: " + command);
 		notifyCommandListenersFailSending(command);
 	}
+	
+	@Override
+	protected void onFinishReloadingDeviceData(DeviceData deviceData) {
+		notifyReloadDeviceDataFinished();
+	}
+	
+	@Override
+	protected void onFailReloadingDeviceData() {
+		notifyReloadDeviceDataFailed();
+	}
 
 	private void notifyNotificationListeners(Notification notification) {
 		for (NotificationsListener listener : notificationListeners) {
@@ -110,6 +135,18 @@ public class SampleDeviceClient extends DeviceClient {
 	private void notifyCommandListenersFailSending(Command command) {
 		for (CommandListener listener : commandListeners) {
 			listener.onFailSendindCommand(command);
+		}
+	}
+	
+	private void notifyReloadDeviceDataFinished() {
+		for (DeviceDataListener listener : deviceDataListeners) {
+			listener.onReloadDeviceDataFinished();
+		}
+	}
+	
+	private void notifyReloadDeviceDataFailed() {
+		for (DeviceDataListener listener : deviceDataListeners) {
+			listener.onReloadDeviceDataFailed();
 		}
 	}
 

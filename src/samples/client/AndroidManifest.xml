@@ -18,12 +18,14 @@
          <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:configChanges="orientation" >
+            android:configChanges="orientation"
+            android:screenOrientation="sensorPortrait" >
         </activity>
         
         <activity
             android:name=".NetworksActivity"
-            android:configChanges="orientation"> 
+            android:configChanges="orientation"
+            android:screenOrientation="sensorPortrait"> 
              <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,22 +35,14 @@
         
         <activity
             android:name=".NetworkDevicesActivity"
-            android:configChanges="orientation" >
+            android:configChanges="orientation"
+            android:screenOrientation="sensorPortrait" >
         </activity>
         
          <activity
             android:name=".DeviceActivity"
-            android:configChanges="orientation" >
-        </activity>
-        
-         <activity
-            android:name=".DeviceNotificationsActivity"
-            android:configChanges="orientation" >
-        </activity>
-        
-         <activity
-            android:name=".DeviceSendCommandActivity"
-            android:configChanges="orientation" >
+            android:configChanges="orientation"
+            android:screenOrientation="sensorPortrait" >
         </activity>
 
         <service 

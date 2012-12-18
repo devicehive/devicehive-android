@@ -6,9 +6,20 @@ import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Notification;
 
+/**
+ * Represents a device client which provides high-level API for communication
+ * with particular device. This class is abstract and designed to be subclassed
+ * in order to handle incoming notifications. Also this class provides plenty of
+ * they various callbacks: {@link #onStartReceivingNotifications()},
+ * {@link #onStopReceivingNotifications()},
+ * {@link #onStartSendingCommand(Command)},
+ * {@link #onFinishSendingCommand(Command)},
+ * {@link #onFailSendingCommand(Command)}, etc.
+ * 
+ */
 public abstract class DeviceClient {
 
-	private final DeviceData device;
+	private DeviceData device;
 	private final ClientServiceConnection serviceConnection;
 
 	/**
@@ -133,6 +144,17 @@ public abstract class DeviceClient {
 	}
 
 	/**
+	 * Reload device data. Current device data is updated with instance of
+	 * {@link DeviceData} retrieved from the server.
+	 * 
+	 * @see #onFinishReloadingDeviceData(DeviceData)
+	 * @see #onFailReloadingDeviceData()
+	 */
+	public void reloadDeviceData() {
+		serviceConnection.reloadDeviceData();
+	}
+
+	/**
 	 * Get context which was used to create this client.
 	 * 
 	 * @return {@link Context} was used to create this client.
@@ -201,6 +223,32 @@ public abstract class DeviceClient {
 	 */
 	protected void onFailSendingCommand(Command command) {
 		// no op
+	}
+
+	/**
+	 * Called when device client finishes reloading device data from the server.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance returned by the server.
+	 */
+	protected void onFinishReloadingDeviceData(DeviceData deviceData) {
+		// no op
+	}
+
+	/**
+	 * Called when device client fails to reload device data from the server.
+	 */
+	protected void onFailReloadingDeviceData() {
+		// no op
+	}
+
+	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
+		this.device = deviceData;
+		onFinishReloadingDeviceData(deviceData);
+	}
+
+	/* package */void onReloadDeviceDataFailedInternal() {
+		onFailReloadingDeviceData();
 	}
 
 	/**

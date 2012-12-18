@@ -1,49 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
-    <EditText
-        android:id="@+id/command_name_edit"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:hint="Command name" >
+        android:orientation="vertical" >
 
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/equipment_code_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginTop="10dp"
-        android:ems="10"
-        android:hint="Equipment code" >
-
-    </EditText>
-
-    <Button
-        android:id="@+id/send_command_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="Send Command"
-        tools:context=".MainActivity" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <TextView
-            android:id="@+id/log_text_view"
+       <EditText
+            android:id="@+id/command_name_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="" />
-    </ScrollView>
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:hint="Command name" >
 
-</LinearLayout>
+        </EditText>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:text="Equipment" >
+        </TextView>
+
+        <Spinner
+            android:id="@+id/equipment_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:text="Parameters" >
+        </TextView>
+
+        <LinearLayout
+            android:id="@+id/parameters_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/add_parameter_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Add Parameter"
+            tools:context=".MainActivity" />
+
+        <Button
+            android:id="@+id/send_command_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Send Command"
+            tools:context=".MainActivity" />
+    </LinearLayout>
+
+</ScrollView>

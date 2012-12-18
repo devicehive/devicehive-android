@@ -72,12 +72,37 @@ public class NetworkDevicesActivity extends BaseActivity {
 	protected void onResume() {
 		super.onResume();
 		Log.d(TAG, "Starting Fetch Network devices request");
-		startCommand(new GetNetworkDevicesCommand(network));
+		networkDevicesListView.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startNetworkDevicesRequest();
+			}
+		}, 10);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+	}
+	
+	@Override
+	protected boolean showsActionBarProgress() {
+		return true;
+	}
+
+	@Override
+	protected boolean showsRefreshActionItem() {
+		return true;
+	}
+
+	@Override
+	protected void onRefresh() {
+		startNetworkDevicesRequest();
+	}
+	
+	private void startNetworkDevicesRequest() {
+		incrementActionBarProgressOperationsCount(1);
+		startCommand(new GetNetworkDevicesCommand(network));
 	}
 
 	private static class NetworkDevicesAdapter extends BaseAdapter {
@@ -136,6 +161,9 @@ public class NetworkDevicesActivity extends BaseActivity {
 	protected void onReceiveResult(final int resultCode, final int tagId,
 			final Bundle resultData) {
 		switch (resultCode) {
+		case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:	  
+	         decrementActionBarProgressOperationsCount();
+	         break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
 			final Throwable exception = DeviceClientCommand
 					.getThrowable(resultData);

@@ -1,15 +1,34 @@
 package com.example.devicehive.android.client.sample;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
+import android.util.Log;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
+import com.dataart.android.devicehive.EquipmentData;
+import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.client.network.DeviceClientCommand;
+import com.dataart.android.devicehive.client.network.GetDeviceClassEquipmentCommand;
+import com.dataart.android.devicehive.client.network.GetDeviceCommand;
+import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
+import com.example.devicehive.android.client.sample.DeviceSendCommandFragment.CommandSender;
+import com.example.devicehive.android.client.sample.DeviceSendCommandFragment.ParameterProvider;
+import com.example.devicehive.android.client.sample.ParameterDialog.ParameterDialogListener;
+import com.example.devicehive.android.client.sample.SampleDeviceClient.CommandListener;
+import com.example.devicehive.android.client.sample.SampleDeviceClient.NotificationsListener;
 
-public class DeviceActivity extends BaseActivity {
+public class DeviceActivity extends BaseActivity implements
+		NotificationsListener, CommandListener, CommandSender,
+		ParameterProvider, ParameterDialogListener {
 
 	private static final String EXTRA_DEVICE = DeviceActivity.class.getName()
 			+ ".EXTRA_DEVICE";
@@ -25,46 +44,21 @@ public class DeviceActivity extends BaseActivity {
 	private DeviceData device;
 	private SampleDeviceClient deviceClient;
 
-	private Button sendCommandButton;
-	private Button viewNotificationsButton;
+	private ViewPager viewPager;
+	private TabsAdapter tabsAdapter;
 
-	private TextView deviceIdTextView;
-	private TextView deviceStatusTextView;
+	private DeviceInformationFragment deviceInfoFragment;
+	private DeviceNotificationsFragment deviceNotificationsFragment;
+	private DeviceSendCommandFragment deviceSendCommandFragment;
+	private EquipmentListFragment equipmentListFragment;
 
-	private TextView deviceClassNameTextView;
-	private TextView deviceClassVersionTextView;
-	private TextView deviceClassIsPermanentTextView;
+	private List<Notification> receivedNotifications = new LinkedList<Notification>();
+	private List<EquipmentData> equipment = new LinkedList<EquipmentData>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_device);
-
-		sendCommandButton = (Button) findViewById(R.id.send_command_button);
-		viewNotificationsButton = (Button) findViewById(R.id.view_notifications_button);
-
-		deviceIdTextView = (TextView) findViewById(R.id.device_id_text_view);
-		deviceStatusTextView = (TextView) findViewById(R.id.device_status_text_view);
-
-		deviceClassNameTextView = (TextView) findViewById(R.id.device_class_name_text_view);
-		deviceClassVersionTextView = (TextView) findViewById(R.id.device_class_version_text_view);
-		deviceClassIsPermanentTextView = (TextView) findViewById(R.id.device_class_is_permanent_text_view);
-
-		sendCommandButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(DeviceActivity.this,
-						DeviceSendCommandActivity.class));
-			}
-		});
-
-		viewNotificationsButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				startActivity(new Intent(DeviceActivity.this,
-						DeviceNotificationsActivity.class));
-			}
-		});
 
 		device = getIntent().getExtras().getParcelable(EXTRA_DEVICE);
 		if (device == null) {
@@ -73,17 +67,166 @@ public class DeviceActivity extends BaseActivity {
 		}
 		setTitle(device.getName());
 
-		deviceIdTextView.setText(device.getId());
-		deviceStatusTextView.setText(device.getStatus());
-
-		deviceClassNameTextView.setText(device.getDeviceClass().getName());
-		deviceClassVersionTextView
-				.setText(device.getDeviceClass().getVersion());
-		deviceClassIsPermanentTextView.setText(""
-				+ device.getDeviceClass().isPermanent());
-
 		SampleClientApplication app = (SampleClientApplication) getApplication();
 		deviceClient = app.setupClientForDevice(device);
+
+		ActionBar ab = getSupportActionBar();
+		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+		viewPager = (ViewPager) findViewById(R.id.pager);
+
+		tabsAdapter = new TabsAdapter(this, viewPager);
+
+		deviceInfoFragment = new DeviceInformationFragment();
+		deviceInfoFragment.setDeviceData(device);
+
+		deviceNotificationsFragment = new DeviceNotificationsFragment();
+		deviceSendCommandFragment = new DeviceSendCommandFragment();
+		deviceSendCommandFragment.setParameterProvider(this);
+
+		equipmentListFragment = new EquipmentListFragment();
+
+		tabsAdapter.addTab(ab.newTab().setText("Summary"), deviceInfoFragment);
+		tabsAdapter.addTab(ab.newTab().setText("Equipment"),
+				equipmentListFragment);
+		tabsAdapter.addTab(ab.newTab().setText("Notifications"),
+				deviceNotificationsFragment);
+		tabsAdapter.addTab(ab.newTab().setText("Send Command"),
+				deviceSendCommandFragment);
+
 	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		deviceClient.addNotificationsListener(this);
+		deviceClient.addCommandListener(this);
+		deviceClient.startReceivingNotifications();
+		viewPager.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startEquipmentRequest();
+			}
+		}, 10);
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		deviceClient.stopReceivingNotifications();
+		deviceClient.removeCommandListener(this);
+		deviceClient.removeNotificationsListener(this);
+
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+	}
+
+	@Override
+	public void onReceviceNotification(Notification notification) {
+		receivedNotifications.add(notification);
+		deviceNotificationsFragment.setNotifications(receivedNotifications);
+	}
+
+	@Override
+	public void sendCommand(Command command) {
+		deviceClient.sendCommand(command);
+	}
+
+	@Override
+	protected boolean showsRefreshActionItem() {
+		return true;
+	}
+
+	@Override
+	protected void onRefresh() {
+		incrementActionBarProgressOperationsCount(1);
+		startCommand(new GetDeviceCommand(deviceClient.getDevice().getId()));
+	}
+
+	@Override
+	protected boolean showsActionBarProgress() {
+		return true;
+	}
+
+	private void startEquipmentRequest() {
+		incrementActionBarProgressOperationsCount(1);
+		startCommand(new GetDeviceClassEquipmentCommand(deviceClient
+				.getDevice().getDeviceClass()));
+	}
+
+	@Override
+	protected void onReceiveResult(final int resultCode, final int tagId,
+			final Bundle resultData) {
+		switch (resultCode) {
+		case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:
+			decrementActionBarProgressOperationsCount();
+			break;
+		case DeviceHiveResultReceiver.MSG_EXCEPTION:
+			final Throwable exception = DeviceClientCommand
+					.getThrowable(resultData);
+			Log.e(TAG, "Failed to execute network command", exception);
+			if (tagId == TAG_GET_DEVICE) {
+				showErrorDialog("Error!", "Failed to retrieve device data");
+			} else if (tagId == TAG_GET_EQUIPMENT) {
+				// retry
+				startEquipmentRequest();
+			}
+			break;
+		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
+			int statusCode = DeviceClientCommand.getStatusCode(resultData);
+			showErrorDialog("Error!", "Server returned status code: "
+					+ statusCode);
+			break;
+		case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
+			if (tagId == TAG_GET_DEVICE) {
+				final DeviceData deviceData = GetDeviceCommand
+						.getDevice(resultData);
+				deviceInfoFragment.setDeviceData(deviceData);
+			} else if (tagId == TAG_GET_EQUIPMENT) {
+				this.equipment = GetDeviceClassEquipmentCommand
+						.getEquipment(resultData);
+				equipmentListFragment.setEquipment(equipment);
+				deviceSendCommandFragment.setEquipment(equipment);
+			}
+			break;
+		}
+	}
+
+	@Override
+	public void onStartSendindCommand(Command command) {
+		Log.d(TAG, "Start sending command: " + command.getCommand());
+	}
+
+	@Override
+	public void onFinishSendindCommand(Command command) {
+		Log.d(TAG, "Finish sending command: " + command.getCommand());
+	}
+
+	@Override
+	public void onFailSendindCommand(Command command) {
+		Log.d(TAG, "Fail sending command: " + command.getCommand() + "\n");
+		showErrorDialog("Error!",
+				"Failed to send command: " + command.getCommand());
+	}
+
+	@Override
+	public void queryParameter() {
+		FragmentManager fm = getSupportFragmentManager();
+		final ParameterDialog parameterDialog = new ParameterDialog();
+		parameterDialog.show(fm, ParameterDialog.TAG);
+	}
+
+	@Override
+	public void onFinishEditingParameter(String name, String value) {
+		if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(value)) {
+			deviceSendCommandFragment.addParameter(name, value);
+		}
+	}
+
+	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
+	private final static int TAG_GET_EQUIPMENT = getTagId(GetDeviceClassEquipmentCommand.class);
 
 }

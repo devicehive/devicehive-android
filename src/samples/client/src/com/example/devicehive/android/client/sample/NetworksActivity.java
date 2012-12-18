@@ -14,8 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -23,6 +21,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.dataart.android.devicehive.Network;
 import com.dataart.android.devicehive.client.network.DeviceClientCommand;
 import com.dataart.android.devicehive.client.network.GetNetworksCommand;
@@ -54,12 +53,20 @@ public class NetworksActivity extends BaseActivity {
 								network);
 					}
 				});
+
+		ActionBar actionbar = getSupportActionBar();
+		actionbar.setTitle("Networks");
 	}
 
 	protected void onResume() {
 		super.onResume();
 		Log.d(TAG, "Starting Get Networks request");
-		startCommand(new GetNetworksCommand());
+		networksListView.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				startNetworksRequest();
+			}
+		}, 10);
 	}
 
 	@Override
@@ -68,22 +75,35 @@ public class NetworksActivity extends BaseActivity {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+	protected boolean showsActionBarProgress() {
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == R.id.menu_settings) {
-			startSettingsActivity();
-			return true;
-		}
-		return false;
+	protected boolean showsSettingsActionItem() {
+		return true;
+	}
+
+	@Override
+	protected boolean showsRefreshActionItem() {
+		return true;
+	}
+
+	protected void onShowSettings() {
+		startSettingsActivity();
+	}
+
+	protected void onRefresh() {
+		startNetworksRequest();
 	}
 
 	private void startSettingsActivity() {
 		startActivity(new Intent(this, SettingsActivity.class));
+	}
+
+	private void startNetworksRequest() {
+		incrementActionBarProgressOperationsCount(1);
+		startCommand(new GetNetworksCommand());
 	}
 
 	private static class NetworksAdapter extends BaseAdapter {
@@ -143,6 +163,9 @@ public class NetworksActivity extends BaseActivity {
 	protected void onReceiveResult(final int resultCode, final int tagId,
 			final Bundle resultData) {
 		switch (resultCode) {
+		case DeviceHiveResultReceiver.MSG_COMPLETE_REQUEST:	  
+	         decrementActionBarProgressOperationsCount();
+	         break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
 			final Throwable exception = DeviceClientCommand
 					.getThrowable(resultData);

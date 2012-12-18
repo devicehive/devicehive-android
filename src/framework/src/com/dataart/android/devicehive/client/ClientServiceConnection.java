@@ -9,8 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.dataart.android.devicehive.Command;
+import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.client.network.GetDeviceCommand;
 import com.dataart.android.devicehive.client.network.PollDeviceNotificationsCommand;
 import com.dataart.android.devicehive.client.network.SendDeviceCommandCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
@@ -51,6 +53,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 		client.onStartSendingCommand(command);
 		startNetworkCommand(new SendDeviceCommandCommand(client.getDevice(),
 				command));
+	}
+	
+	/* package */ void reloadDeviceData() {
+		startNetworkCommand(new GetDeviceCommand(client.getDevice().getId()));
 	}
 
 	/* package */void startReceivingNotifications() {
@@ -159,6 +165,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				if (isReceivingNotifications) {
 					handleNextNotification();
 				}
+			} else if (tagId == TAG_GET_DEVICE) {
+				logD("Get device request finished");
+				final DeviceData deviceData = GetDeviceCommand.getDevice(resultData);
+				client.onReloadDeviceDataFinishedInternal(deviceData);
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
@@ -176,6 +186,8 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				if (isReceivingNotifications) {
 					handleNextNotification();
 				}
+			} else if (tagId == TAG_GET_DEVICE) {
+				client.onReloadDeviceDataFailedInternal();
 			}
 			break;
 		}
@@ -191,4 +203,5 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 
 	private final static int TAG_SEND_COMMAND = getTagId(SendDeviceCommandCommand.class);
 	private final static int TAG_POLL_NOTIFICATIONS = getTagId(PollDeviceNotificationsCommand.class);
+	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
 }
