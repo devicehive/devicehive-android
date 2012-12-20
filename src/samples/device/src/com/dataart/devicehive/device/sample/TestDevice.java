@@ -44,10 +44,6 @@ public class TestDevice extends Device {
 	}
 
 	private static DeviceData getTestDeviceData() {
-
-		//final Network network = new Network(
-		//		"Test Android Network - API7",
-		//		"Test Android Device Network - API7");
 		
 		final Network network = new Network(
 				"Test Android Network(Device Framework)",

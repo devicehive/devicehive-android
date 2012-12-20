@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 
 	private NotificationSender notificationSender;
 	private ParameterProvider parameterProvider;
+	private ParametersAdapter parametersAdapter;
 
 	private List<EquipmentData> equipment;
 	private List<Parameter> parameters = new LinkedList<Parameter>();
@@ -148,11 +150,18 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 
 	private void setupParameters(List<Parameter> parameters) {
 		parametersContainer.removeAllViews();
-		ParametersAdapter paramsAdapter = new ParametersAdapter(getActivity(),
+		parametersAdapter = new ParametersAdapter(getActivity(),
 				parameters);
-		final int count = paramsAdapter.getCount();
+		parametersAdapter.registerDataSetObserver(new DataSetObserver() {
+			@Override
+			public void onChanged() {
+				super.onChanged();
+				setupParameters(DeviceSendNotificationFragment.this.parameters);
+			}
+		});
+		final int count = parametersAdapter.getCount();
 		for (int i = 0; i < count; i++) {
-			parametersContainer.addView(paramsAdapter.getView(i, null,
+			parametersContainer.addView(parametersAdapter.getView(i, null,
 					parametersContainer));
 		}
 	}
@@ -195,17 +204,12 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 	private static class ParametersAdapter extends BaseAdapter {
 
 		private final LayoutInflater inflater;
-		private List<Parameter> parameters;
+		private final List<Parameter> parameters;
 
 		public ParametersAdapter(Context context,
 				List<Parameter> parameters) {
 			this.parameters = parameters;
 			this.inflater = LayoutInflater.from(context);
-		}
-
-		public void setParameters(List<Parameter> parameters) {
-			this.parameters = parameters;
-			notifyDataSetChanged();
 		}
 
 		@Override
@@ -222,6 +226,18 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 		public long getItemId(int position) {
 			return position;
 		}
+		
+		public void removeParameter(Parameter parameter) {
+			parameters.remove(parameter);
+			notifyDataSetChanged();
+		}
+		
+		private View.OnClickListener clickListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				removeParameter((Parameter)v.getTag());
+			}
+		};
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -234,6 +250,8 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 						.findViewById(R.id.parameter_name_text_view);
 				holder.value = (TextView) convertView
 						.findViewById(R.id.parameter_value_text_view);
+				holder.deleteButton = convertView.findViewById(R.id.parameter_delete_image_view);
+				holder.deleteButton.setOnClickListener(clickListener);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -241,12 +259,14 @@ public class DeviceSendNotificationFragment extends SherlockFragment {
 			final Parameter parameter = parameters.get(position);
 			holder.name.setText(parameter.name);
 			holder.value.setText(parameter.value);
+			holder.deleteButton.setTag(parameter);
 			return convertView;
 		}
 
 		private class ViewHolder {
 			TextView name;
 			TextView value;
+			View deleteButton;
 		}
 
 	}

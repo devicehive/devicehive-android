@@ -24,7 +24,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:text="Equipment" >
+            android:text="Equipment"
+            android:textStyle="bold" >
+
         </TextView>
 
         <Spinner
@@ -37,7 +39,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:ems="10"
-            android:text="Parameters" >
+            android:text="Parameters"
+            android:textStyle="bold" >
+
         </TextView>
 
         <LinearLayout
