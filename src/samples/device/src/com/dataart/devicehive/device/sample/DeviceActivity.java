@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -51,6 +52,8 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 	private EquipmentListFragment equipmentListFragment;
 
 	private List<Command> receivedCommands = new LinkedList<Command>();
+	
+	private SampleDevicePreferences prefs;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,8 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 
 		SampleDeviceApplication app = (SampleDeviceApplication) getApplication();
 		device = app.getDevice();
+		
+		prefs = new SampleDevicePreferences(this);
 
 		ActionBar ab = getSupportActionBar();
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -92,20 +97,27 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
+	protected void onResume() {
+		super.onResume();
 		device.addDeviceListener(this);
 		device.addCommandListener(this);
 		deviceInfoFragment.setDeviceData(device.getDeviceData());
-		device.registerDevice();
+		if (!device.isRegistered()) {
+			device.registerDevice();
+		} else {
+			device.startProcessingCommands();
+		}
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onPause() {
+		super.onPause();
 		device.removeDeviceListener(this);
 		device.removeCommandListener(this);
 		device.stopProcessingCommands();
+		if (isFinishing()) {
+			device.unregisterDevice();
+		}
 	}
 
 	@Override
@@ -186,6 +198,47 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 		if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(value)) {
 			deviceSendNotificationFragment.addParameter(name, value);
 		}
+	}
+
+	private com.actionbarsherlock.view.Menu optionsMenu;
+
+	private static final int MENU_ID_SETTINGS = 0x01;
+
+	@Override
+	public boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu menu) {
+		optionsMenu = menu;
+		menu.add(com.actionbarsherlock.view.Menu.NONE, MENU_ID_SETTINGS,
+				com.actionbarsherlock.view.Menu.NONE, "Settings")
+				.setIcon(R.drawable.ic_menu_settings)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	private static final int SETTINGS_REQUEST_CODE = 0x01;
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == SETTINGS_REQUEST_CODE && resultCode == RESULT_OK) {
+			Log.d(TAG, "Changed settings!");
+			device.stopProcessingCommands();
+			device.unregisterDevice();
+			device.setApiEnpointUrl(prefs.getServerUrl());
+			receivedCommands = new LinkedList<Command>();
+			deviceCommandsFragment.setCommands(receivedCommands);
+		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(
+			com.actionbarsherlock.view.MenuItem item) {
+		if (item.getItemId() == MENU_ID_SETTINGS) {
+			startActivityForResult(new Intent(this, SettingsActivity.class),
+					SETTINGS_REQUEST_CODE);
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 }

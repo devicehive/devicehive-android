@@ -10,8 +10,15 @@ public class SampleDeviceApplication extends Application {
 	public void onCreate() {
 		super.onCreate();
 		device = new TestDevice(getApplicationContext());
-		device.setApiEnpointUrl("http://ecloud.dataart.com/ecapi6");
 		device.setDebugLoggingEnabled(BuildConfig.DEBUG);
+		
+		final SampleDevicePreferences prefs = new SampleDevicePreferences(this);
+		String serverUrl = prefs.getServerUrl();
+		if (serverUrl == null) {
+			serverUrl = DeviceHiveConfig.API_ENDPOINT;
+			prefs.setServerUrlSync(serverUrl);
+		} 
+		device.setApiEnpointUrl(serverUrl);
 	}
 	
 	public TestDevice getDevice() {

@@ -117,6 +117,14 @@ public abstract class Device implements CommandRunner {
 		onStartRegistration();
 		serviceConnection.registerDevice();
 	}
+	
+	/**
+	 * Unregister device. Also unregisters all attached equipment.
+	 */
+	public void unregisterDevice() {
+		isRegistered = false;
+		serviceConnection.unregisterDevice();
+	}
 
 	/**
 	 * Check if this device is registered.

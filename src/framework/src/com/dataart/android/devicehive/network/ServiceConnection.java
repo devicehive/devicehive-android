@@ -44,6 +44,13 @@ public abstract class ServiceConnection {
 	}
 
 	public void setApiEndpointUrl(String url) {
+		if (apiEndpointUrl != null && !apiEndpointUrl.equals(url)) {
+			// detach result listener to avoid receiving responses from old endpoint.
+			if (resultReceiver != null) {
+				resultReceiver.detachResultListener();
+				resultReceiver = null;
+			}
+		}
 		this.apiEndpointUrl = url;
 	}
 
@@ -74,7 +81,7 @@ public abstract class ServiceConnection {
 	}
 
 	protected DeviceHiveResultReceiver getResultReceiver() {
-		if (null == resultReceiver) {
+		if (resultReceiver == null) {
 			resultReceiver = new DeviceHiveResultReceiver();
 			resultReceiver.setResultListener(resultListener, true);
 		}

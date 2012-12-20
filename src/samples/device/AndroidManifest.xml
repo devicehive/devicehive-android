@@ -31,6 +31,13 @@
             android:name=".DeviceSendNotificationActivity"
             android:configChanges="orientation" >
         </activity>
+        
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:configChanges="orientation"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
 
         <service
             android:name="com.dataart.android.devicehive.network.DeviceHiveApiService"

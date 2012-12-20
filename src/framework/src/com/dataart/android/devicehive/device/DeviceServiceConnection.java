@@ -42,6 +42,14 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	public void setLastCommandPollTimestamp(String timestamp) {
 		this.lastCommandPollTimestamp = timestamp;
 	}
+	
+	@Override
+	public void setApiEndpointUrl(String url) {
+		if (apiEndpointUrl != null && !apiEndpointUrl.equals(url)) {
+			isPollRequestInProgress = false;
+		}
+		super.setApiEndpointUrl(url);
+	}
 
 	/* package */void sendNotification(Notification notification) {
 		logD("Sending notification: " + notification.getName());
@@ -72,6 +80,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 
 	/* package */void registerDevice() {
 		startNetworkCommand(new RegisterDeviceCommand(device.getDeviceData()));
+	}
+	
+	/* package */void unregisterDevice() {
+		unregisterEquipment();
 	}
 
 	private void runCommandOnRunner(final CommandRunner commandRunner,
