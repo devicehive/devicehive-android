@@ -63,6 +63,12 @@ public class SampleDeviceClient extends DeviceClient {
 	public void removeCommandListener(CommandListener listener) {
 		commandListeners.remove(listener);
 	}
+	
+	public void clearAllListeners() {
+		notificationListeners.clear();
+		commandListeners.clear();
+		deviceDataListeners.clear();
+	}
 
 	@Override
 	protected void onReceiveNotification(final Notification notification) {

@@ -41,6 +41,7 @@ public class DeviceActivity extends BaseActivity implements
 
 	private static final String TAG = "DeviceActivity";
 
+	private SampleClientApplication app;
 	private DeviceData device;
 	private SampleDeviceClient deviceClient;
 
@@ -67,7 +68,7 @@ public class DeviceActivity extends BaseActivity implements
 		}
 		setTitle(device.getName());
 
-		SampleClientApplication app = (SampleClientApplication) getApplication();
+		app = (SampleClientApplication) getApplication();
 		deviceClient = app.setupClientForDevice(device);
 
 		ActionBar ab = getSupportActionBar();
@@ -116,7 +117,9 @@ public class DeviceActivity extends BaseActivity implements
 		deviceClient.stopReceivingNotifications();
 		deviceClient.removeCommandListener(this);
 		deviceClient.removeNotificationsListener(this);
-
+		if (isFinishing()) {
+			app.resetClient();
+		}
 	}
 
 	@Override
