@@ -12,8 +12,9 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dataart.android.devicehive.EquipmentData;
+import com.dataart.android.devicehive.EquipmentState;
 
-public class EquipmentListFragment extends ListFragment  {
+public class EquipmentListFragment extends ListFragment {
 
 	private EquipmentAdapter equipmentAdapter;
 
@@ -27,34 +28,35 @@ public class EquipmentListFragment extends ListFragment  {
 		return f;
 	}
 
-	public void setEquipment(List<EquipmentData> equipment) {
-		equipmentAdapter = new EquipmentAdapter(getActivity(), equipment);
+	public void setEquipment(List<EquipmentData> equipment,
+			List<EquipmentState> equipmentState) {
+		equipmentAdapter = new EquipmentAdapter(getActivity(), equipment,
+				equipmentState);
 		setListAdapter(equipmentAdapter);
-	}	
-	
+	}
+
 	private static class EquipmentAdapter extends BaseAdapter {
 
 		private final LayoutInflater inflater;
-		private List<EquipmentData> equipment;
+		private List<EquipmentData> equipmentList;
+		private List<EquipmentState> equipmentStateList;
 
-		public EquipmentAdapter(Context context, List<EquipmentData> equipment) {
-			this.equipment = equipment;
+		public EquipmentAdapter(Context context,
+				List<EquipmentData> equipmentList,
+				List<EquipmentState> equipmentStateList) {
+			this.equipmentList = equipmentList;
+			this.equipmentStateList = equipmentStateList;
 			this.inflater = LayoutInflater.from(context);
-		}
-		
-		public void setEquipment(List<EquipmentData> equipment) {
-			this.equipment = equipment;
-			notifyDataSetChanged();
 		}
 
 		@Override
 		public int getCount() {
-			return equipment.size();
+			return equipmentList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return equipment.get(position);
+			return equipmentList.get(position);
 		}
 
 		@Override
@@ -66,8 +68,8 @@ public class EquipmentListFragment extends ListFragment  {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				convertView = inflater
-						.inflate(R.layout.equipment_list_item, null);
+				convertView = inflater.inflate(R.layout.equipment_list_item,
+						null);
 				holder = new ViewHolder();
 				holder.name = (TextView) convertView
 						.findViewById(R.id.equipment_name_text_view);
@@ -75,14 +77,18 @@ public class EquipmentListFragment extends ListFragment  {
 						.findViewById(R.id.equipment_code_text_view);
 				holder.type = (TextView) convertView
 						.findViewById(R.id.equipment_type_text_view);
+				holder.state = (TextView) convertView
+						.findViewById(R.id.equipment_state_text_view);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			final EquipmentData equipmentData = equipment.get(position);
+			final EquipmentData equipmentData = equipmentList.get(position);
 			holder.name.setText(equipmentData.getName());
 			holder.code.setText(equipmentData.getCode());
 			holder.type.setText(equipmentData.getType());
+			final EquipmentState state = getEquipmentState(equipmentData);
+			holder.state.setText(equipmentStateAsString(state));
 			return convertView;
 		}
 
@@ -90,6 +96,24 @@ public class EquipmentListFragment extends ListFragment  {
 			TextView name;
 			TextView code;
 			TextView type;
+			TextView state;
+		}
+
+		private EquipmentState getEquipmentState(EquipmentData equipmentData) {
+			for (EquipmentState state : equipmentStateList) {
+				if (state.getEquipmentCode().equals(equipmentData.getCode())) {
+					return state;
+				}
+			}
+			return null;
+		}
+
+		private static String equipmentStateAsString(EquipmentState state) {
+			if (state != null) {
+				return "" + state.getParameters();
+			} else {
+				return "--";
+			}
 		}
 
 	}

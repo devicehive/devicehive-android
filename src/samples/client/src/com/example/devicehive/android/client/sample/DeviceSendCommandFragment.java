@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.EquipmentData;
+import android.database.DataSetObserver;
 
 public class DeviceSendCommandFragment extends SherlockFragment {
 
@@ -36,6 +38,7 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 
 	private CommandSender commandSender;
 	private ParameterProvider parameterProvider;
+	private ParametersAdapter parametersAdapter;
 
 	private List<EquipmentData> equipment;
 	private List<CommandParameter> parameters = new LinkedList<CommandParameter>();
@@ -148,11 +151,18 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 
 	private void setupParameters(List<CommandParameter> parameters) {
 		parametersContainer.removeAllViews();
-		ParametersAdapter paramsAdapter = new ParametersAdapter(getActivity(),
+		parametersAdapter = new ParametersAdapter(getActivity(),
 				parameters);
-		final int count = paramsAdapter.getCount();
+		parametersAdapter.registerDataSetObserver(new DataSetObserver() {
+			@Override
+			public void onChanged() {
+				super.onChanged();
+				setupParameters(DeviceSendCommandFragment.this.parameters);
+			}
+		});
+		final int count = parametersAdapter.getCount();
 		for (int i = 0; i < count; i++) {
-			parametersContainer.addView(paramsAdapter.getView(i, null,
+			parametersContainer.addView(parametersAdapter.getView(i, null,
 					parametersContainer));
 		}
 	}
@@ -195,16 +205,16 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 	private static class ParametersAdapter extends BaseAdapter {
 
 		private final LayoutInflater inflater;
-		private List<CommandParameter> parameters;
+		private final List<CommandParameter> parameters;
 
 		public ParametersAdapter(Context context,
 				List<CommandParameter> parameters) {
 			this.parameters = parameters;
 			this.inflater = LayoutInflater.from(context);
 		}
-
-		public void setParameters(List<CommandParameter> parameters) {
-			this.parameters = parameters;
+		
+		public void removeParameter(CommandParameter parameter) {
+			parameters.remove(parameter);
 			notifyDataSetChanged();
 		}
 
@@ -222,6 +232,13 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 		public long getItemId(int position) {
 			return position;
 		}
+		
+		private View.OnClickListener clickListener = new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				removeParameter((CommandParameter)v.getTag());
+			}
+		};
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -234,6 +251,8 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 						.findViewById(R.id.parameter_name_text_view);
 				holder.value = (TextView) convertView
 						.findViewById(R.id.parameter_value_text_view);
+				holder.deleteButton = convertView.findViewById(R.id.parameter_delete_image_view);
+				holder.deleteButton.setOnClickListener(clickListener);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -241,12 +260,14 @@ public class DeviceSendCommandFragment extends SherlockFragment {
 			final CommandParameter parameter = parameters.get(position);
 			holder.name.setText(parameter.name);
 			holder.value.setText(parameter.value);
+			holder.deleteButton.setTag(parameter);
 			return convertView;
 		}
 
 		private class ViewHolder {
 			TextView name;
 			TextView value;
+			View deleteButton;
 		}
 
 	}

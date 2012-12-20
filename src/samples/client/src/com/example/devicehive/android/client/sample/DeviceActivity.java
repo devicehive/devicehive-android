@@ -15,10 +15,12 @@ import com.actionbarsherlock.app.ActionBar;
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.EquipmentData;
+import com.dataart.android.devicehive.EquipmentState;
 import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.client.network.DeviceClientCommand;
 import com.dataart.android.devicehive.client.network.GetDeviceClassEquipmentCommand;
 import com.dataart.android.devicehive.client.network.GetDeviceCommand;
+import com.dataart.android.devicehive.client.network.GetDeviceEquipmentStateCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.example.devicehive.android.client.sample.DeviceSendCommandFragment.CommandSender;
 import com.example.devicehive.android.client.sample.DeviceSendCommandFragment.ParameterProvider;
@@ -55,6 +57,7 @@ public class DeviceActivity extends BaseActivity implements
 
 	private List<Notification> receivedNotifications = new LinkedList<Notification>();
 	private List<EquipmentData> equipment = new LinkedList<EquipmentData>();
+	private List<EquipmentState> equipmentState = new LinkedList<EquipmentState>();
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,7 +105,6 @@ public class DeviceActivity extends BaseActivity implements
 		super.onResume();
 		deviceClient.addNotificationsListener(this);
 		deviceClient.addCommandListener(this);
-		deviceClient.startReceivingNotifications();
 		viewPager.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -145,8 +147,16 @@ public class DeviceActivity extends BaseActivity implements
 
 	@Override
 	protected void onRefresh() {
-		incrementActionBarProgressOperationsCount(1);
-		startCommand(new GetDeviceCommand(deviceClient.getDevice().getId()));
+		ActionBar actionBar = getSupportActionBar();
+		actionBar.getSelectedTab().getText();
+		if (actionBar.getSelectedTab().getTag() == deviceInfoFragment) {
+			incrementActionBarProgressOperationsCount(1);
+			startCommand(new GetDeviceCommand(deviceClient.getDevice().getId()));
+		} else if (actionBar.getSelectedTab().getTag() == equipmentListFragment) {
+			incrementActionBarProgressOperationsCount(1);
+			startCommand(new GetDeviceEquipmentStateCommand(
+					deviceClient.getDevice()));
+		}
 	}
 
 	@Override
@@ -155,7 +165,7 @@ public class DeviceActivity extends BaseActivity implements
 	}
 
 	private void startEquipmentRequest() {
-		incrementActionBarProgressOperationsCount(1);
+		incrementActionBarProgressOperationsCount(2);
 		startCommand(new GetDeviceClassEquipmentCommand(deviceClient
 				.getDevice().getDeviceClass()));
 	}
@@ -176,6 +186,10 @@ public class DeviceActivity extends BaseActivity implements
 			} else if (tagId == TAG_GET_EQUIPMENT) {
 				// retry
 				startEquipmentRequest();
+			} else if (tagId == TAG_GET_EQUIPMENT_STATE) {
+				// retry
+				startCommand(new GetDeviceEquipmentStateCommand(
+						deviceClient.getDevice()));
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
@@ -191,8 +205,16 @@ public class DeviceActivity extends BaseActivity implements
 			} else if (tagId == TAG_GET_EQUIPMENT) {
 				this.equipment = GetDeviceClassEquipmentCommand
 						.getEquipment(resultData);
-				equipmentListFragment.setEquipment(equipment);
 				deviceSendCommandFragment.setEquipment(equipment);
+				startCommand(new GetDeviceEquipmentStateCommand(
+						deviceClient.getDevice()));
+			} else if (tagId == TAG_GET_EQUIPMENT_STATE) {
+				this.equipmentState = GetDeviceEquipmentStateCommand
+						.getEquipmentState(resultData);
+				equipmentListFragment.setEquipment(equipment, equipmentState);
+				if (!deviceClient.isReceivingNotifications()) {
+					deviceClient.startReceivingNotifications();
+				}
 			}
 			break;
 		}
@@ -231,5 +253,6 @@ public class DeviceActivity extends BaseActivity implements
 
 	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
 	private final static int TAG_GET_EQUIPMENT = getTagId(GetDeviceClassEquipmentCommand.class);
+	private final static int TAG_GET_EQUIPMENT_STATE = getTagId(GetDeviceEquipmentStateCommand.class);
 
 }

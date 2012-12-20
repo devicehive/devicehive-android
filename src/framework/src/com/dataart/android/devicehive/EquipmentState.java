@@ -85,4 +85,11 @@ public class EquipmentState implements Parcelable {
 		return 0;
 	}
 
+	@Override
+	public String toString() {
+		return String.format(
+				"EquipmentState(code = %s, timestamp = %s, parameters = %s)",
+				equipmentCode, timestamp, parameters);
+	}
+
 }
