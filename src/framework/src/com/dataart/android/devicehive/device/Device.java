@@ -113,6 +113,7 @@ public abstract class Device implements CommandRunner {
 			throw new IllegalStateException(
 					"API Endpoint URL should be set before registering device");
 		}
+		isRegistered = false;
 		onStartRegistration();
 		serviceConnection.registerDevice();
 	}

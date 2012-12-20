@@ -11,7 +11,7 @@ public class DeviceClass implements Parcelable {
 	private String name;
 	private String version;
 	private boolean isPermanent;
-	private int offlineTimeout;
+	private Integer offlineTimeout;
 
 	/**
 	 * Construct a new device class with given parameters. This method is
@@ -30,7 +30,7 @@ public class DeviceClass implements Parcelable {
 	 *            framework changes device status to "Offline".
 	 */
 	public DeviceClass(int id, String name, String version,
-			boolean isPermanent, int offlineTimeout) {
+			boolean isPermanent, Integer offlineTimeout) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -52,7 +52,7 @@ public class DeviceClass implements Parcelable {
 	 *            framework changes device status to "Offline".
 	 */
 	public DeviceClass(String name, String version, boolean isPermanent,
-			int offlineTimeout) {
+			Integer offlineTimeout) {
 		this(-1, name, version, isPermanent, offlineTimeout);
 	}
 
@@ -65,7 +65,7 @@ public class DeviceClass implements Parcelable {
 	 *            Device class version.
 	 */
 	public DeviceClass(String name, String version) {
-		this(-1, name, version, false, -1);
+		this(-1, name, version, false, null);
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class DeviceClass implements Parcelable {
 	 * 
 	 * @return Inactivity timeout value in seconds.
 	 */
-	public int getOfflineTimeout() {
+	public Integer getOfflineTimeout() {
 		return offlineTimeout;
 	}
 
@@ -126,7 +126,7 @@ public class DeviceClass implements Parcelable {
 		dest.writeString(name);
 		dest.writeString(version);
 		dest.writeInt(isPermanent ? 1 : 0);
-		dest.writeInt(offlineTimeout);
+		dest.writeValue(offlineTimeout);
 	}
 
 	public static Parcelable.Creator<DeviceClass> CREATOR = new Parcelable.Creator<DeviceClass>() {
@@ -139,7 +139,7 @@ public class DeviceClass implements Parcelable {
 		@Override
 		public DeviceClass createFromParcel(Parcel source) {
 			return new DeviceClass(source.readInt(), source.readString(),
-					source.readString(), source.readInt() > 0, source.readInt());
+					source.readString(), source.readInt() > 0, (Integer)source.readValue(null));
 		}
 	};
 

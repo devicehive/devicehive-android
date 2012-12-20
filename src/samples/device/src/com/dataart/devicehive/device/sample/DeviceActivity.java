@@ -96,20 +96,16 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 		super.onStart();
 		device.addDeviceListener(this);
 		device.addCommandListener(this);
-		if (!device.isRegistered()) {
-			device.registerDevice();
-		} else {
-			deviceInfoFragment.setDeviceData(device.getDeviceData());
-			device.startProcessingCommands();
-		}
+		deviceInfoFragment.setDeviceData(device.getDeviceData());
+		device.registerDevice();
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
 		device.removeDeviceListener(this);
-		device.stopProcessingCommands();
 		device.removeCommandListener(this);
+		device.stopProcessingCommands();
 	}
 
 	@Override
