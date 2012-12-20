@@ -14,10 +14,21 @@ public abstract class DeviceCommand extends JsonNetworkCommand {
 
 	protected final DeviceData deviceData;
 
+	/**
+	 * Construct new command with given device data.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} object.
+	 */
 	public DeviceCommand(DeviceData deviceData) {
 		this.deviceData = deviceData;
 	}
 
+	/**
+	 * Get {@link DeviceData} object describing target device.
+	 * 
+	 * @return {@link DeviceData} object.
+	 */
 	public DeviceData getDeviceData() {
 		return deviceData;
 	}

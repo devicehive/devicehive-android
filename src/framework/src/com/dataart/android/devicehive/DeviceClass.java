@@ -13,6 +13,22 @@ public class DeviceClass implements Parcelable {
 	private boolean isPermanent;
 	private int offlineTimeout;
 
+	/**
+	 * Construct a new device class with given parameters. This method is
+	 * intended for internal use.
+	 * 
+	 * @param id
+	 *            Device class identifier.
+	 * @param name
+	 *            Device class display name.
+	 * @param version
+	 *            Device class version.
+	 * @param isPermanent
+	 *            Whether this device class is permanent.
+	 * @param offlineTimeout
+	 *            If set, specifies inactivity timeout in seconds before the
+	 *            framework changes device status to "Offline".
+	 */
 	public DeviceClass(int id, String name, String version,
 			boolean isPermanent, int offlineTimeout) {
 		this.id = id;
@@ -23,7 +39,7 @@ public class DeviceClass implements Parcelable {
 	}
 
 	/**
-	 * Constructs a new device class with given parameters.
+	 * Construct a new device class with given parameters.
 	 * 
 	 * @param name
 	 *            Device class display name.

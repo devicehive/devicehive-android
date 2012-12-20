@@ -12,6 +12,17 @@ import com.dataart.android.devicehive.DeviceData;
  */
 public class GetDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 
+	/**
+	 * Construct a new command with given {@link DeviceData} and last received
+	 * command timestamp.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance.
+	 * @param lastCommandPollTimestamp
+	 *            Timestamp of the last received command. If null value is
+	 *            passed then server will return all command it's received so
+	 *            far.
+	 */
 	public GetDeviceCommandsCommand(DeviceData deviceData,
 			String lastCommandPollTimestamp) {
 		super(deviceData, lastCommandPollTimestamp);

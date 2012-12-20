@@ -37,6 +37,11 @@ public class Command implements Parcelable {
 		this(-1, null, command, parameters, lifetime, flags, null, null);
 	}
 	
+	/**
+	 * Create command with given name and parameters.
+	 * @param command Command name.
+	 * @param parameters Parameters dictionary.
+	 */
 	public Command(String command, HashMap<String, Object> parameters) {
 		this(-1, null, command, parameters, 0, 0, null, null);
 	}

@@ -24,12 +24,25 @@ public class SendNotificationCommand extends DeviceCommand {
 
 	private final Notification notification;
 
+	/**
+	 * Construct a new command with given {@link DeviceData} and last received
+	 * command timestamp.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance.
+	 * @param notification
+	 *            {@link Notification} to be sent on behalf of given device.
+	 */
 	public SendNotificationCommand(DeviceData deviceData,
 			Notification notification) {
 		super(deviceData);
 		this.notification = notification;
 	}
 
+	/**
+	 * Get {@link Notification} to be sent.
+	 * @return {@link Notification} instance.
+	 */
 	public Notification getNotification() {
 		return notification;
 	}

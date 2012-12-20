@@ -21,6 +21,12 @@ public class RegisterDeviceCommand extends DeviceCommand {
 	private static final String DEVICE_DATA_KEY = NAMESPACE
 			.concat(".DEVICE_DATA_KEY");
 
+	/**
+	 * Construct a new command with given {@link DeviceData}.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance.
+	 */
 	public RegisterDeviceCommand(DeviceData deviceData) {
 		super(deviceData);
 	}

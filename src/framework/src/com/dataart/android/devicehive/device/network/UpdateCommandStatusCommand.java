@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
+import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.device.CommandResult;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
@@ -25,6 +26,16 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 	private final Command command;
 	private final CommandResult commandResult;
 
+	/**
+	 * Construct a new command with given {@link DeviceData} and {@link Command} to update with {@link CommandResult}.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance.
+	 * @param command
+	 *            {@link Command} to be updated.
+	 * @param commandResult
+	 *            {@link CommandResult} object describing command status.
+	 */
 	public UpdateCommandStatusCommand(DeviceData deviceData, Command command,
 			CommandResult commandResult) {
 		super(deviceData);
