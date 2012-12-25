@@ -1,12 +1,14 @@
 package com.dataart.android.devicehive;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
  * Represents a device class which holds meta-information about {@link Client}s.
  */
-public class DeviceClass implements Parcelable {
+public class DeviceClass extends DataContainer {
 	private int id;
 	private String name;
 	private String version;
@@ -31,6 +33,16 @@ public class DeviceClass implements Parcelable {
 	 */
 	public DeviceClass(int id, String name, String version,
 			boolean isPermanent, Integer offlineTimeout) {
+		this.id = id;
+		this.name = name;
+		this.version = version;
+		this.isPermanent = isPermanent;
+		this.offlineTimeout = offlineTimeout;
+	}
+
+	/* package */DeviceClass(Serializable data, int id, String name,
+			String version, boolean isPermanent, Integer offlineTimeout) {
+		super(data);
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -116,12 +128,8 @@ public class DeviceClass implements Parcelable {
 	}
 
 	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
 		dest.writeInt(id);
 		dest.writeString(name);
 		dest.writeString(version);
@@ -138,8 +146,9 @@ public class DeviceClass implements Parcelable {
 
 		@Override
 		public DeviceClass createFromParcel(Parcel source) {
-			return new DeviceClass(source.readInt(), source.readString(),
-					source.readString(), source.readInt() > 0, (Integer)source.readValue(null));
+			return new DeviceClass(source.readSerializable(), source.readInt(),
+					source.readString(), source.readString(),
+					source.readInt() > 0, (Integer) source.readValue(null));
 		}
 	};
 
@@ -147,7 +156,7 @@ public class DeviceClass implements Parcelable {
 	public String toString() {
 		return "DeviceClass [id=" + id + ", name=" + name + ", version="
 				+ version + ", isPermanent=" + isPermanent
-				+ ", offlineTimeout=" + offlineTimeout + "]";
+				+ ", offlineTimeout=" + offlineTimeout + ", data=" + data + "]";
 	}
 
 }

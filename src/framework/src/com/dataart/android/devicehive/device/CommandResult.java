@@ -1,5 +1,7 @@
 package com.dataart.android.devicehive.device;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -19,7 +21,7 @@ public class CommandResult implements Parcelable {
 	public static final String STATUS_FAILED = "Failed";
 
 	private final String status;
-	private final String result;
+	private final Object result;
 
 	/**
 	 * Constructs command result with given status and result.
@@ -29,7 +31,7 @@ public class CommandResult implements Parcelable {
 	 * @param result
 	 *            Command execution result.
 	 */
-	public CommandResult(String status, String result) {
+	public CommandResult(String status, Serializable result) {
 		this.status = status;
 		this.result = result;
 	}
@@ -48,7 +50,7 @@ public class CommandResult implements Parcelable {
 	 * 
 	 * @return Command execution result.
 	 */
-	public String getResult() {
+	public Object getResult() {
 		return result;
 	}
 
@@ -60,7 +62,7 @@ public class CommandResult implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(status);
-		dest.writeString(result);
+		dest.writeSerializable((Serializable)result);
 	}
 
 	public static Parcelable.Creator<CommandResult> CREATOR = new Parcelable.Creator<CommandResult>() {
@@ -72,7 +74,7 @@ public class CommandResult implements Parcelable {
 
 		@Override
 		public CommandResult createFromParcel(Parcel source) {
-			return new CommandResult(source.readString(), source.readString());
+			return new CommandResult(source.readString(), source.readSerializable());
 		}
 	};
 }

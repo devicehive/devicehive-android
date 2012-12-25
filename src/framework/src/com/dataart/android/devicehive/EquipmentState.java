@@ -1,6 +1,6 @@
 package com.dataart.android.devicehive;
 
-import java.util.HashMap;
+import java.io.Serializable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,7 +14,7 @@ public class EquipmentState implements Parcelable {
 	@SerializedName("id")
 	private String equipmentCode;
 	private String timestamp;
-	private HashMap<String, Object> parameters;
+	private Object parameters;
 
 	/**
 	 * Construct equipment state with given parameters.
@@ -25,7 +25,7 @@ public class EquipmentState implements Parcelable {
 	 * @param parameters
 	 */
 	/* package */EquipmentState(String code, String timestamp,
-			HashMap<String, Object> parameters) {
+			Serializable parameters) {
 		this.equipmentCode = code;
 		this.timestamp = timestamp;
 		this.parameters = parameters;
@@ -52,9 +52,9 @@ public class EquipmentState implements Parcelable {
 	/**
 	 * Get current equipment state.
 	 * 
-	 * @return Dictionary which contains equipment state parameters.
+	 * @return Equipment state parameters.
 	 */
-	public HashMap<String, Object> getParameters() {
+	public Object getParameters() {
 		return parameters;
 	}
 
@@ -62,7 +62,7 @@ public class EquipmentState implements Parcelable {
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(equipmentCode);
 		dest.writeString(timestamp);
-		dest.writeSerializable(parameters);
+		dest.writeSerializable((Serializable) parameters);
 	}
 
 	public static Parcelable.Creator<EquipmentState> CREATOR = new Parcelable.Creator<EquipmentState>() {
@@ -72,11 +72,10 @@ public class EquipmentState implements Parcelable {
 			return new EquipmentState[size];
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public EquipmentState createFromParcel(Parcel source) {
 			return new EquipmentState(source.readString(), source.readString(),
-					(HashMap<String, Object>) source.readSerializable());
+					source.readSerializable());
 		}
 	};
 

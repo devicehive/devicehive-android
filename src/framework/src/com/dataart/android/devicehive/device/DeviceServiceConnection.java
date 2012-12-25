@@ -42,7 +42,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	public void setLastCommandPollTimestamp(String timestamp) {
 		this.lastCommandPollTimestamp = timestamp;
 	}
-	
+
 	@Override
 	public void setApiEndpointUrl(String url) {
 		if (apiEndpointUrl != null && !apiEndpointUrl.equals(url)) {
@@ -81,7 +81,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	/* package */void registerDevice() {
 		startNetworkCommand(new RegisterDeviceCommand(device.getDeviceData()));
 	}
-	
+
 	/* package */void unregisterDevice() {
 		unregisterEquipment();
 	}
@@ -108,17 +108,18 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private void executeNextCommand() {
 		final Command command = commandQueue.poll();
 		if (command != null) {
 			device.onBeforeRunCommand(command);
-			final Map<String, Object> parameters = command.getParameters();
-			if (parameters == null
-					|| !parameters.containsKey(EQUIPMENT_PARAMETER)) {
+			Object parameters = command.getParameters();
+			if (parameters == null || !(parameters instanceof Map)
+					|| !((Map) parameters).containsKey(EQUIPMENT_PARAMETER)) {
 				runCommandOnRunner(device, command);
 			} else {
 				Equipment equipment = device
-						.getEquipmentWithCode((String) parameters
+						.getEquipmentWithCode((String) ((Map) parameters)
 								.get(EQUIPMENT_PARAMETER));
 				if (equipment != null) {
 					equipment.onBeforeRunCommand(command);
@@ -147,7 +148,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				deviceCommand.getCommand(), result.getStatus(),
 				result.getResult()));
 		startNetworkCommand(new UpdateCommandStatusCommand(
-				device.getDeviceData(), deviceCommand, result));
+				device.getDeviceData(), deviceCommand.getId(), result));
 	}
 
 	private int enqueueCommands(List<Command> commands) {

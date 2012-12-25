@@ -6,7 +6,6 @@ import android.os.Parcelable;
 
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
-import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.device.CommandResult;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
@@ -23,11 +22,12 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 
 	private static final String COMMAND_KEY = NAMESPACE.concat(".COMMAND_KEY");
 
-	private final Command command;
+	private final int commandId;
 	private final CommandResult commandResult;
 
 	/**
-	 * Construct a new command with given {@link DeviceData} and {@link Command} to update with {@link CommandResult}.
+	 * Construct a new update command with given {@link DeviceData} and
+	 * identifier of the command to update with {@link CommandResult}.
 	 * 
 	 * @param deviceData
 	 *            {@link DeviceData} instance.
@@ -36,10 +36,10 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 	 * @param commandResult
 	 *            {@link CommandResult} object describing command status.
 	 */
-	public UpdateCommandStatusCommand(DeviceData deviceData, Command command,
+	public UpdateCommandStatusCommand(DeviceData deviceData, int commandId,
 			CommandResult commandResult) {
 		super(deviceData);
-		this.command = command;
+		this.commandId = commandId;
 		this.commandResult = commandResult;
 	}
 
@@ -51,13 +51,13 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 	@Override
 	protected String getRequestPath() {
 		return String.format("device/%s/command/%d", getEncodedDeviceId(),
-				command.getId());
+				commandId);
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
-		dest.writeParcelable(command, 0);
+		dest.writeInt(commandId);
 		dest.writeParcelable(commandResult, 0);
 	}
 
@@ -72,7 +72,7 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 		public UpdateCommandStatusCommand createFromParcel(Parcel source) {
 			return new UpdateCommandStatusCommand(
 					(DeviceData) source.readParcelable(CLASS_LOADER),
-					(Command) source.readParcelable(CLASS_LOADER),
+					source.readInt(),
 					(CommandResult) source.readParcelable(CLASS_LOADER));
 		}
 	};

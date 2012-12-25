@@ -1,12 +1,16 @@
 package com.dataart.android.devicehive;
 
+import java.io.Serializable;
+
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.dataart.android.devicehive.device.Equipment;
 
 /**
  * Represents equipment data. Used to initialize {@link Equipment} object.
  */
-public class EquipmentData implements Parcelable {
+public class EquipmentData extends DataContainer {
 	private int id;
 	private String name;
 	private String code;
@@ -25,10 +29,12 @@ public class EquipmentData implements Parcelable {
 	 *            capabilities.
 	 */
 	public EquipmentData(String name, String code, String type) {
-		this(-1, name, code, type);
+		this(null, -1, name, code, type);
 	}
 
-	/* package */EquipmentData(int id, String name, String code, String type) {
+	/* package */EquipmentData(Serializable data, int id, String name,
+			String code, String type) {
+		super(data);
 		this.id = id;
 		this.name = name;
 		this.code = code;
@@ -74,12 +80,8 @@ public class EquipmentData implements Parcelable {
 	}
 
 	@Override
-	public int describeContents() {
-		return 0;
-	}
-
-	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
 		dest.writeInt(id);
 		dest.writeString(name);
 		dest.writeString(code);
@@ -95,8 +97,9 @@ public class EquipmentData implements Parcelable {
 
 		@Override
 		public EquipmentData createFromParcel(Parcel source) {
-			return new EquipmentData(source.readInt(), source.readString(),
-					source.readString(), source.readString());
+			return new EquipmentData(source.readSerializable(),
+					source.readInt(), source.readString(), source.readString(),
+					source.readString());
 		}
 	};
 

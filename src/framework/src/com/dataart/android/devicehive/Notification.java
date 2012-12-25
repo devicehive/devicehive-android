@@ -1,7 +1,6 @@
 package com.dataart.android.devicehive;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,10 +16,10 @@ public class Notification implements Parcelable {
 	@SerializedName("notification")
 	private String name;
 	private String timestamp;
-	private HashMap<String, Object> parameters;
+	private Object parameters;
 
 	/* package */Notification(int id, String name, String timestamp,
-			HashMap<String, Object> parameters) {
+			Serializable parameters) {
 		this.id = id;
 		this.name = name;
 		this.timestamp = timestamp;
@@ -35,7 +34,7 @@ public class Notification implements Parcelable {
 	 * @param parameters
 	 *            Notification parameters.
 	 */
-	public Notification(String name, HashMap<String, Object> parameters) {
+	public Notification(String name, Serializable parameters) {
 		this(-1, name, null, parameters);
 	}
 
@@ -71,7 +70,7 @@ public class Notification implements Parcelable {
 	 * 
 	 * @return Notification parameters dictionary.
 	 */
-	public Map<String, Object> getParameters() {
+	public Object getParameters() {
 		return parameters;
 	}
 
@@ -85,7 +84,7 @@ public class Notification implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(name);
 		dest.writeSerializable(timestamp);
-		dest.writeSerializable(parameters);
+		dest.writeSerializable((Serializable) parameters);
 	}
 
 	public static Parcelable.Creator<Notification> CREATOR = new Parcelable.Creator<Notification>() {
@@ -95,12 +94,10 @@ public class Notification implements Parcelable {
 			return new Notification[size];
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public Notification createFromParcel(Parcel source) {
 			return new Notification(source.readInt(), source.readString(),
-					source.readString(),
-					(HashMap<String, Object>) source.readSerializable());
+					source.readString(), source.readSerializable());
 		}
 	};
 

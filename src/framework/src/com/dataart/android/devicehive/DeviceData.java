@@ -1,5 +1,6 @@
 package com.dataart.android.devicehive;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import android.os.Parcelable;
 /**
  * Represents device data. Used to initialize {@link Client} object.
  */
-public class DeviceData implements Parcelable {
+public class DeviceData extends DataContainer {
 
 	/**
 	 * "Online" device status.
@@ -51,12 +52,33 @@ public class DeviceData implements Parcelable {
 	 */
 	public DeviceData(String id, String key, String name, String status,
 			Network network, DeviceClass deviceClass) {
-		this(id, key, name, status, network, deviceClass, null);
+		this(null, id, key, name, status, network, deviceClass, null);
 	}
 
-	/* package */DeviceData(String id, String key, String name, String status,
-			Network network, DeviceClass deviceClass,
-			List<EquipmentData> equipment) {
+	/**
+	 * Construct device data with given parameters.
+	 * 
+	 * @param id
+	 *            Device unique identifier.
+	 * @param key
+	 *            Device authentication key. The key maximum length is 64
+	 *            characters.
+	 * @param name
+	 *            Device display name.
+	 * @param status
+	 *            Device operation status.
+	 * @param deviceClass
+	 *            Associated {@link DeviceClass}.
+	 */
+	public DeviceData(String id, String key, String name, String status,
+			DeviceClass deviceClass) {
+		this(null, id, key, name, status, null, deviceClass, null);
+	}
+
+	/* package */DeviceData(Serializable data, String id, String key,
+			String name, String status, Network network,
+			DeviceClass deviceClass, List<EquipmentData> equipment) {
+		super(data);
 		this.id = id;
 		this.key = key;
 		this.name = name;
@@ -149,6 +171,7 @@ public class DeviceData implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		super.writeToParcel(dest, flags);
 		dest.writeString(id);
 		dest.writeString(key);
 		dest.writeString(name);
@@ -167,6 +190,7 @@ public class DeviceData implements Parcelable {
 
 		@Override
 		public DeviceData createFromParcel(Parcel source) {
+			Serializable data = source.readSerializable();
 			String id = source.readString();
 			String key = source.readString();
 			String name = source.readString();
@@ -175,8 +199,8 @@ public class DeviceData implements Parcelable {
 			DeviceClass deviceClass = source.readParcelable(CLASS_LOADER);
 			List<EquipmentData> equipments = new LinkedList<EquipmentData>();
 			source.readTypedList(equipments, EquipmentData.CREATOR);
-			return new DeviceData(id, key, name, status, network, deviceClass,
-					equipments);
+			return new DeviceData(data, id, key, name, status, network,
+					deviceClass, equipments);
 		}
 	};
 
@@ -185,7 +209,7 @@ public class DeviceData implements Parcelable {
 		return "DeviceData [id=" + id + ", key=" + key + ", name=" + name
 				+ ", status=" + status + ", network=" + network
 				+ ", deviceClass=" + deviceClass + ", equipment=" + equipment
-				+ "]";
+				+ ", data=" + data + "]";
 	}
 
 }

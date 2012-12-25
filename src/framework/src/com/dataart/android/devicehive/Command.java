@@ -1,7 +1,6 @@
 package com.dataart.android.devicehive;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.Serializable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,15 +12,15 @@ public class Command implements Parcelable {
 	private int id;
 	private String timestamp;
 	private String command;
-	private HashMap<String, Object> parameters;
+	private Object parameters;
 	private int lifetime;
 	private int flags;
 	private String status;
 	private String result;
 
 	/* package */Command(int id, String timestamp, String command,
-			HashMap<String, Object> parameters, int lifetime, int flags,
-			String status, String result) {
+			Serializable parameters, int lifetime, int flags, String status,
+			String result) {
 		this.id = id;
 		this.timestamp = timestamp;
 		this.command = command;
@@ -32,17 +31,20 @@ public class Command implements Parcelable {
 		this.result = result;
 	}
 
-	public Command(String command, HashMap<String, Object> parameters,
-			int lifetime, int flags) {
+	public Command(String command, Serializable parameters, int lifetime,
+			int flags) {
 		this(-1, null, command, parameters, lifetime, flags, null, null);
 	}
-	
+
 	/**
 	 * Create command with given name and parameters.
-	 * @param command Command name.
-	 * @param parameters Parameters dictionary.
+	 * 
+	 * @param command
+	 *            Command name.
+	 * @param parameters
+	 *            Parameters dictionary.
 	 */
-	public Command(String command, HashMap<String, Object> parameters) {
+	public Command(String command, Serializable parameters) {
 		this(-1, null, command, parameters, 0, 0, null, null);
 	}
 
@@ -78,7 +80,7 @@ public class Command implements Parcelable {
 	 * 
 	 * @return Command parameters dictionary.
 	 */
-	public Map<String, Object> getParameters() {
+	public Object getParameters() {
 		return parameters;
 	}
 
@@ -130,7 +132,7 @@ public class Command implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(timestamp);
 		dest.writeString(command);
-		dest.writeSerializable(parameters);
+		dest.writeSerializable((Serializable) parameters);
 		dest.writeInt(lifetime);
 		dest.writeInt(flags);
 		dest.writeString(status);
@@ -144,12 +146,10 @@ public class Command implements Parcelable {
 			return new Command[size];
 		}
 
-		@SuppressWarnings("unchecked")
 		@Override
 		public Command createFromParcel(Parcel source) {
 			return new Command(source.readInt(), source.readString(),
-					source.readString(),
-					(HashMap<String, Object>) source.readSerializable(),
+					source.readString(), source.readSerializable(),
 					source.readInt(), source.readInt(), source.readString(),
 					source.readString());
 		}

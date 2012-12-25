@@ -9,8 +9,8 @@ import com.dataart.android.devicehive.Notification;
 /**
  * Represents a device client which provides high-level API for communication
  * with particular device. This class is abstract and designed to be subclassed
- * in order to handle incoming notifications. Also this class provides plenty of
- * they various callbacks: {@link #onStartReceivingNotifications()},
+ * in order to handle incoming notifications. Also this class provides a number
+ * of various callbacks: {@link #onStartReceivingNotifications()},
  * {@link #onStopReceivingNotifications()},
  * {@link #onStartSendingCommand(Command)},
  * {@link #onFinishSendingCommand(Command)},
