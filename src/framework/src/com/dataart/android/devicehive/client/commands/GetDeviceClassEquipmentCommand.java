@@ -1,4 +1,4 @@
-package com.dataart.android.devicehive.client.network;
+package com.dataart.android.devicehive.client.commands;
 
 import java.util.ArrayList;
 import java.util.List;

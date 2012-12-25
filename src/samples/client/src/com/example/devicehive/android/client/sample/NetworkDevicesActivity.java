@@ -18,8 +18,8 @@ import android.widget.TextView;
 
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Network;
-import com.dataart.android.devicehive.client.network.DeviceClientCommand;
-import com.dataart.android.devicehive.client.network.GetNetworkDevicesCommand;
+import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
+import com.dataart.android.devicehive.client.commands.GetNetworkDevicesCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 
 public class NetworkDevicesActivity extends BaseActivity {

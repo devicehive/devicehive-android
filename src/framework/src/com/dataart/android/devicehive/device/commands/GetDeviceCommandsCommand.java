@@ -1,4 +1,4 @@
-package com.dataart.android.devicehive.device.network;
+package com.dataart.android.devicehive.device.commands;
 
 import android.os.Parcel;
 import android.os.Parcelable;

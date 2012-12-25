@@ -23,8 +23,8 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.dataart.android.devicehive.Network;
-import com.dataart.android.devicehive.client.network.DeviceClientCommand;
-import com.dataart.android.devicehive.client.network.GetNetworksCommand;
+import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
+import com.dataart.android.devicehive.client.commands.GetNetworksCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 
 public class NetworksActivity extends BaseActivity {

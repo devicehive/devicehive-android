@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
-import com.dataart.android.devicehive.client.network.DeviceClientCommand;
+import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
 
