@@ -19,7 +19,7 @@ import com.dataart.android.devicehive.EquipmentState;
 import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.client.commands.GetDeviceClassEquipmentCommand;
-import com.dataart.android.devicehive.commands.GetDeviceCommand;
+import com.dataart.android.devicehive.client.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.client.commands.GetDeviceEquipmentStateCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.example.devicehive.android.client.sample.DeviceSendCommandFragment.CommandSender;

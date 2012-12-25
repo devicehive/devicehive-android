@@ -14,7 +14,7 @@ import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
-import com.dataart.android.devicehive.commands.GetDeviceCommand;
+import com.dataart.android.devicehive.device.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.device.commands.PollDeviceCommandsCommand;
 import com.dataart.android.devicehive.device.commands.RegisterDeviceCommand;
 import com.dataart.android.devicehive.device.commands.SendNotificationCommand;
@@ -88,7 +88,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	/* package */void reloadDeviceData() {
-		startNetworkCommand(new GetDeviceCommand(device.getDeviceData().getId()));
+		startNetworkCommand(new GetDeviceCommand(device.getDeviceData()));
 	}
 
 	private void runCommandOnRunner(final CommandRunner commandRunner,

@@ -14,7 +14,7 @@ import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.client.commands.PollDeviceNotificationsCommand;
 import com.dataart.android.devicehive.client.commands.SendDeviceCommandCommand;
-import com.dataart.android.devicehive.commands.GetDeviceCommand;
+import com.dataart.android.devicehive.client.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;

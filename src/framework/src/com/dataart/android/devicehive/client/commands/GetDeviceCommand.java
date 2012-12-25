@@ -1,4 +1,4 @@
-package com.dataart.android.devicehive.commands;
+package com.dataart.android.devicehive.client.commands;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -6,14 +6,13 @@ import android.os.Parcelable;
 
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
-import com.dataart.android.devicehive.network.JsonNetworkCommand;
 import com.google.gson.Gson;
 
 /**
  * Get device object with given identifier. As a result returns
  * {@link DeviceData} instance.
  */
-public class GetDeviceCommand extends JsonNetworkCommand {
+public class GetDeviceCommand extends DeviceClientCommand {
 
 	private final static String NAMESPACE = GetDeviceCommand.class.getName();
 
