@@ -14,6 +14,7 @@ import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.device.commands.PollDeviceCommandsCommand;
 import com.dataart.android.devicehive.device.commands.RegisterDeviceCommand;
 import com.dataart.android.devicehive.device.commands.SendNotificationCommand;
@@ -84,6 +85,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 
 	/* package */void unregisterDevice() {
 		unregisterEquipment();
+	}
+
+	/* package */void reloadDeviceData() {
+		startNetworkCommand(new GetDeviceCommand(device.getDeviceData().getId()));
 	}
 
 	private void runCommandOnRunner(final CommandRunner commandRunner,
@@ -212,6 +217,11 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				if (isProcessingCommands) {
 					executeNextCommand();
 				}
+			} else if (tagId == TAG_GET_DEVICE) {
+				logD("Get device request finished");
+				final DeviceData deviceData = GetDeviceCommand
+						.getDevice(resultData);
+				device.onReloadDeviceDataFinishedInternal(deviceData);
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
@@ -241,6 +251,8 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				if (!device.isRegistered()) {
 					device.onFailRegistration();
 				}
+			} else if (tagId == TAG_GET_DEVICE) {
+				device.onReloadDeviceDataFailedInternal();
 			}
 			break;
 		}
@@ -309,4 +321,5 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private final static int TAG_SEND_NOTIFICATION = getTagId(SendNotificationCommand.class);
 	private final static int TAG_POLL_COMMANDS = getTagId(PollDeviceCommandsCommand.class);
 	private final static int TAG_UPDATE_COMMAND_STATUS = getTagId(UpdateCommandStatusCommand.class);
+	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
 }

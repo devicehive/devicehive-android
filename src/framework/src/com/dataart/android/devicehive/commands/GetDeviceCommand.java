@@ -5,15 +5,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.dataart.android.devicehive.DeviceData;
-import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
+import com.dataart.android.devicehive.network.JsonNetworkCommand;
 import com.google.gson.Gson;
 
 /**
  * Get device object with given identifier. As a result returns
  * {@link DeviceData} instance.
  */
-public class GetDeviceCommand extends DeviceClientCommand {
+public class GetDeviceCommand extends JsonNetworkCommand {
 
 	private final static String NAMESPACE = GetDeviceCommand.class.getName();
 
@@ -60,6 +60,11 @@ public class GetDeviceCommand extends DeviceClientCommand {
 			return new GetDeviceCommand(source.readString());
 		}
 	};
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {

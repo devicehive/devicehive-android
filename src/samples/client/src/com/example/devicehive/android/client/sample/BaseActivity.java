@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.dataart.android.devicehive.client.commands.DeviceClientCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
+import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
 
 public class BaseActivity extends SherlockFragmentActivity {
@@ -30,7 +31,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	protected final <T extends DeviceClientCommand> void startCommand(
+	protected final <T extends NetworkCommand> void startCommand(
 			final T command) {
 		command.start(getApplicationContext(), getNetworkCommandConfig());
 	}

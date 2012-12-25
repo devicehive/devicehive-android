@@ -24,7 +24,7 @@ import android.util.Log;
  */
 public abstract class Device implements CommandRunner {
 
-	private final DeviceData deviceData;
+	private DeviceData deviceData;
 	private final DeviceServiceConnection serviceConnection;
 
 	private boolean isRegistered = false;
@@ -117,7 +117,7 @@ public abstract class Device implements CommandRunner {
 		onStartRegistration();
 		serviceConnection.registerDevice();
 	}
-	
+
 	/**
 	 * Unregister device. Also unregisters all attached equipment.
 	 */
@@ -185,6 +185,17 @@ public abstract class Device implements CommandRunner {
 	public void stopProcessingCommands() {
 		serviceConnection.stopProcessingCommands();
 		onStopProcessingCommandsInternal();
+	}
+
+	/**
+	 * Reload device data. Current device data is updated with instance of
+	 * {@link DeviceData} retrieved from the server.
+	 * 
+	 * @see #onFinishReloadingDeviceData(DeviceData)
+	 * @see #onFailReloadingDeviceData()
+	 */
+	public void reloadDeviceData() {
+		serviceConnection.reloadDeviceData();
 	}
 
 	/**
@@ -280,6 +291,23 @@ public abstract class Device implements CommandRunner {
 	}
 
 	/**
+	 * Called when device finishes reloading device data from the server.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance returned by the server.
+	 */
+	protected void onFinishReloadingDeviceData(DeviceData deviceData) {
+		// no op
+	}
+
+	/**
+	 * Called when device to reload device data from the server.
+	 */
+	protected void onFailReloadingDeviceData() {
+		// no op
+	}
+
+	/**
 	 * Called when device or equipment notification is about to be sent.
 	 * Override this method to perform additional actions before a notification
 	 * is sent.
@@ -354,6 +382,15 @@ public abstract class Device implements CommandRunner {
 
 	/* package */void equipmentUnregistrationFinished(boolean result) {
 		// no op
+	}
+
+	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
+		this.deviceData = deviceData;
+		onFinishReloadingDeviceData(deviceData);
+	}
+
+	/* package */void onReloadDeviceDataFailedInternal() {
+		onFailReloadingDeviceData();
 	}
 
 	private void onStartProcessingCommandsInternal() {
