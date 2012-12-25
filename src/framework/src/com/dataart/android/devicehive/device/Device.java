@@ -1,5 +1,6 @@
 package com.dataart.android.devicehive.device;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -385,8 +386,19 @@ public abstract class Device implements CommandRunner {
 	}
 
 	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
-		this.deviceData = deviceData;
+		updateDeviceData(deviceData);
 		onFinishReloadingDeviceData(deviceData);
+	}
+
+	private void updateDeviceData(DeviceData newDeviceData) {
+		this.deviceData = new DeviceData(deviceData.getId(),
+				deviceData.getKey(), newDeviceData.getName(),
+				newDeviceData.getStatus(), newDeviceData.getNetwork(),
+				newDeviceData.getDeviceClass());
+		this.deviceData.setData((Serializable)newDeviceData.getData());
+		for (Equipment equipment : equipmentList) {
+			this.deviceData.addEquipment(equipment.getEquipmentData());
+		}
 	}
 
 	/* package */void onReloadDeviceDataFailedInternal() {
