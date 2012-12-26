@@ -19,7 +19,7 @@ public class Notification implements Parcelable {
 	private Object parameters;
 
 	protected Notification(int id, String name, String timestamp,
-			Serializable parameters) {
+			Object parameters) {
 		this.id = id;
 		this.name = name;
 		this.timestamp = timestamp;
@@ -34,7 +34,7 @@ public class Notification implements Parcelable {
 	 * @param parameters
 	 *            Notification parameters.
 	 */
-	public Notification(String name, Serializable parameters) {
+	public Notification(String name, Object parameters) {
 		this(-1, name, null, parameters);
 	}
 

@@ -25,7 +25,7 @@ public class EquipmentState implements Parcelable {
 	 * @param parameters
 	 */
 	/* package */EquipmentState(String code, String timestamp,
-			Serializable parameters) {
+			Object parameters) {
 		this.equipmentCode = code;
 		this.timestamp = timestamp;
 		this.parameters = parameters;

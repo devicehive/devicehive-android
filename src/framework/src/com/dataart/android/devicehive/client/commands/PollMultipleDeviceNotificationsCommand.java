@@ -3,6 +3,7 @@ package com.dataart.android.devicehive.client.commands;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -22,7 +23,8 @@ import com.google.gson.reflect.TypeToken;
  * blocks until new notification is received. The blocking period is limited
  * (currently 30 seconds). As a result returns list of {@link Notification}.
  */
-public class PollMultipleDeviceNotificationsCommand extends NotificationsRetrivalCommand {
+public class PollMultipleDeviceNotificationsCommand extends
+		NotificationsRetrivalCommand {
 
 	protected final List<String> deviceIds;
 
@@ -46,7 +48,7 @@ public class PollMultipleDeviceNotificationsCommand extends NotificationsRetriva
 		dest.writeStringList(deviceIds);
 		super.writeToParcel(dest, flags);
 	}
-	
+
 	public static Parcelable.Creator<PollMultipleDeviceNotificationsCommand> CREATOR = new Parcelable.Creator<PollMultipleDeviceNotificationsCommand>() {
 
 		@Override
@@ -55,20 +57,21 @@ public class PollMultipleDeviceNotificationsCommand extends NotificationsRetriva
 		}
 
 		@Override
-		public PollMultipleDeviceNotificationsCommand createFromParcel(Parcel source) {
-			List<String> deviceIds = null;
+		public PollMultipleDeviceNotificationsCommand createFromParcel(
+				Parcel source) {
+			List<String> deviceIds = new LinkedList<String>();
 			source.readStringList(deviceIds);
-			return new PollMultipleDeviceNotificationsCommand(
-					deviceIds,
+			return new PollMultipleDeviceNotificationsCommand(deviceIds,
 					source.readString());
 		}
 	};
-	
+
 	@Override
 	protected String getRequestPath() {
-		String requestPath = "/device/notification/poll";
+		String requestPath = "device/notification/poll";
 		if (isDeviceGuidsPresent()) {
-			requestPath += String.format("?deviceGuids=%s",prepareGuidsString(deviceIds));
+			requestPath += String.format("?deviceGuids=%s",
+					prepareGuidsString(deviceIds));
 		}
 		if (lastNotificationPollTimestamp != null) {
 			requestPath += isDeviceGuidsPresent() ? "&" : "?";
@@ -77,13 +80,13 @@ public class PollMultipleDeviceNotificationsCommand extends NotificationsRetriva
 		}
 		return requestPath;
 	}
-	
+
 	private boolean isDeviceGuidsPresent() {
 		return deviceIds != null && !deviceIds.isEmpty();
 	}
-	
+
 	private String prepareGuidsString(List<String> guids) {
-		if (deviceIds != null && !deviceIds.isEmpty()) {
+		if (deviceIds == null || deviceIds.isEmpty()) {
 			return null;
 		} else {
 			final StringBuilder builder = new StringBuilder("");
@@ -95,31 +98,55 @@ public class PollMultipleDeviceNotificationsCommand extends NotificationsRetriva
 			return builder.toString();
 		}
 	}
-	
+
 	public static class DeviceNotification extends Notification {
 
 		private String deviceGuid;
-		
+
 		public String getDeviceGuid() {
 			return deviceGuid;
 		}
 
-		DeviceNotification(int id, String name, String timestamp,
+		/* package */DeviceNotification(int id, String name, String timestamp,
 				Serializable parameters) {
 			super(id, name, timestamp, parameters);
 		}
+
+		/* package */DeviceNotification(String deviceGuid,
+				Notification notification) {
+			super(notification.getId(), notification.getName(), notification
+					.getTimestamp(), notification.getParameters());
+			this.deviceGuid = deviceGuid;
+		}
+	}
+
+	private static class DeviceGuidNotification {
+		String deviceGuid;
+		Notification notification;
 	}
 
 	@Override
 	protected int fromJson(final String response, final Gson gson,
 			final Bundle resultData) {
 
-		Type listType = new TypeToken<ArrayList<DeviceNotification>>() {
+		Type listType = new TypeToken<ArrayList<DeviceGuidNotification>>() {
 		}.getType();
 
-		ArrayList<DeviceNotification> notifications = new Gson().fromJson(response,
-				listType);
-		resultData.putParcelableArrayList(NOTIFICATIONS_KEY, notifications);
+		ArrayList<DeviceGuidNotification> notifications = new Gson().fromJson(
+				response, listType);
+		resultData.putParcelableArrayList(NOTIFICATIONS_KEY,
+				asDeviceNotificationList(notifications));
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
+	}
+
+	private static ArrayList<DeviceNotification> asDeviceNotificationList(
+			List<DeviceGuidNotification> notifications) {
+		ArrayList<DeviceNotification> result = new ArrayList<DeviceNotification>(
+				notifications.size());
+		for (DeviceGuidNotification guidNotification : notifications) {
+			result.add(new DeviceNotification(guidNotification.deviceGuid,
+					guidNotification.notification));
+		}
+		return result;
 	}
 }

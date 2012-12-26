@@ -13,8 +13,8 @@ import android.os.Parcelable;
 
 	}
 
-	protected DataContainer(Serializable data) {
-		this.data = data;
+	protected DataContainer(Object data) {
+		setData(data);
 	}
 
 	/**
@@ -25,7 +25,7 @@ import android.os.Parcelable;
 	 * @param data
 	 *            An object that can be serialized to JSON.
 	 */
-	public void setData(Serializable data) {
+	public void setData(Object data) {
 		this.data = data;
 	}
 
@@ -46,7 +46,7 @@ import android.os.Parcelable;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeSerializable((Serializable) data);
+		dest.writeSerializable((Serializable)data);
 	}
 
 }

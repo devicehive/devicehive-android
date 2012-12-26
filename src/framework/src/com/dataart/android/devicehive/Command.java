@@ -19,7 +19,7 @@ public class Command implements Parcelable {
 	private String result;
 
 	/* package */Command(int id, String timestamp, String command,
-			Serializable parameters, int lifetime, int flags, String status,
+			Object parameters, int lifetime, int flags, String status,
 			String result) {
 		this.id = id;
 		this.timestamp = timestamp;
@@ -31,7 +31,7 @@ public class Command implements Parcelable {
 		this.result = result;
 	}
 
-	public Command(String command, Serializable parameters, int lifetime,
+	public Command(String command, Object parameters, int lifetime,
 			int flags) {
 		this(-1, null, command, parameters, lifetime, flags, null, null);
 	}
@@ -44,7 +44,7 @@ public class Command implements Parcelable {
 	 * @param parameters
 	 *            Parameters dictionary.
 	 */
-	public Command(String command, Serializable parameters) {
+	public Command(String command, Object parameters) {
 		this(-1, null, command, parameters, 0, 0, null, null);
 	}
 
