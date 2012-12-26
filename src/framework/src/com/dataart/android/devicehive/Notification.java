@@ -18,7 +18,7 @@ public class Notification implements Parcelable {
 	private String timestamp;
 	private Object parameters;
 
-	/* package */Notification(int id, String name, String timestamp,
+	protected Notification(int id, String name, String timestamp,
 			Serializable parameters) {
 		this.id = id;
 		this.name = name;

@@ -7,46 +7,24 @@ import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Notification;
 
 /**
- * Represents a device client which provides high-level API for communication
- * with particular device. This class is abstract and designed to be subclassed
- * in order to handle incoming notifications. Also this class provides a number
- * of various callbacks: {@link #onStartReceivingNotifications()},
- * {@link #onStopReceivingNotifications()},
- * {@link #onStartSendingCommand(Command)},
- * {@link #onFinishSendingCommand(Command)},
- * {@link #onFailSendingCommand(Command)}, etc.
- * 
+ * An abstract device client which provides basic API for clients. This class is
+ * abstract and designed to be subclassed.
  */
-public abstract class DeviceClient {
+/* package */abstract class DeviceClient {
 
-	private DeviceData device;
-	private final ClientServiceConnection serviceConnection;
+	protected final Context context;
+	protected ClientServiceConnection serviceConnection;
 
 	/**
-	 * Construct client with given {@link Context} and {@link DeviceData}
-	 * objects.
+	 * Construct client with given {@link Context}.
 	 * 
 	 * @param context
 	 *            {@link Context} object. In most cases this should be
 	 *            application context which stays alive during the entire life
 	 *            of an application.
-	 * @param deviceData
-	 *            {@link DeviceData} object which describes device to
-	 *            communicate with.
 	 */
-	public DeviceClient(Context context, DeviceData device) {
-		this.device = device;
-		this.serviceConnection = new ClientServiceConnection(context);
-		this.serviceConnection.setClient(this);
-	}
-
-	/**
-	 * Get corresponding device.
-	 * 
-	 * @return {@link DeviceData} object.
-	 */
-	public DeviceData getDevice() {
-		return device;
+	protected DeviceClient(Context context) {
+		this.context = context;
 	}
 
 	/**
@@ -101,8 +79,16 @@ public abstract class DeviceClient {
 	 * @param timestamp
 	 *            Timestamp of the last received notification.
 	 */
-	public void setLastNotificationsPollTimestamp(String timestamp) {
+	public void setLastNotificationPollTimestamp(String timestamp) {
 		serviceConnection.setLastNotificationPollTimestamp(timestamp);
+	}
+
+	/**
+	 * Get the timestamp of the last received notification.
+	 * @return Timestamp of the last received notification.
+	 */
+	public String getLastNotificationPollTimestamp() {
+		return serviceConnection.getLastNotificationPollTimestamp();
 	}
 
 	/**
@@ -114,16 +100,6 @@ public abstract class DeviceClient {
 	 */
 	public boolean isReceivingNotifications() {
 		return serviceConnection.isReceivingNotifications();
-	}
-
-	/**
-	 * Send command to the device.
-	 * 
-	 * @param command
-	 *            {@link Command} to be sent.
-	 */
-	public void sendCommand(final Command command) {
-		serviceConnection.sendCommand(command);
 	}
 
 	/**
@@ -141,17 +117,6 @@ public abstract class DeviceClient {
 	public void stopReceivingNotifications() {
 		serviceConnection.stopReceivingNotifications();
 		onStopReceivingNotifications();
-	}
-
-	/**
-	 * Reload device data. Current device data is updated with instance of
-	 * {@link DeviceData} retrieved from the server.
-	 * 
-	 * @see #onFinishReloadingDeviceData(DeviceData)
-	 * @see #onFailReloadingDeviceData()
-	 */
-	public void reloadDeviceData() {
-		serviceConnection.reloadDeviceData();
 	}
 
 	/**
@@ -242,15 +207,6 @@ public abstract class DeviceClient {
 		// no op
 	}
 
-	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
-		this.device = deviceData;
-		onFinishReloadingDeviceData(deviceData);
-	}
-
-	/* package */void onReloadDeviceDataFailedInternal() {
-		onFailReloadingDeviceData();
-	}
-
 	/**
 	 * Check whether given notification should be handled asynchronously. If so
 	 * {@link #onReceiveNotification(Notification)} method is called on some
@@ -264,15 +220,17 @@ public abstract class DeviceClient {
 	protected abstract boolean shouldReceiveNotificationAsynchronously(
 			final Notification notification);
 
-	/**
-	 * Handle received notification. Can be called either on main (UI) thread or
-	 * some background thread depending on
-	 * {@link #shouldReceiveNotificationAsynchronously(Notification)} method
-	 * return value.
-	 * 
-	 * @param notification
-	 *            {@link Notification} instance to handle by the client.
-	 */
-	protected abstract void onReceiveNotification(
-			final Notification notification);
+	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
+		onFinishReloadingDeviceData(deviceData);
+	}
+
+	/* package */void onReloadDeviceDataFailedInternal() {
+		onFailReloadingDeviceData();
+	}
+
+	/* package */void setServiceConnection(
+			ClientServiceConnection serviceConnection) {
+		this.serviceConnection = serviceConnection;
+		this.serviceConnection.setClient(this);
+	}
 }

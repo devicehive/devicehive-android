@@ -2,7 +2,6 @@ package com.dataart.android.devicehive.client.commands;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.os.Bundle;
 import android.os.Parcel;
@@ -19,16 +18,9 @@ import com.google.gson.reflect.TypeToken;
  * 
  */
 public abstract class DeviceNotificationsRetrivalCommand extends
-		DeviceClientCommand {
-
-	private final static String NAMESPACE = DeviceNotificationsRetrivalCommand.class
-			.getName();
-
-	private static final String NOTIFICATIONS_KEY = NAMESPACE
-			.concat(".NOTIFICATIONS_KEY");
+		NotificationsRetrivalCommand {
 
 	protected final DeviceData deviceData;
-	protected final String lastNotificationPollTimestamp;
 
 	/**
 	 * Construct command for given device and last received notification
@@ -41,20 +33,14 @@ public abstract class DeviceNotificationsRetrivalCommand extends
 	 */
 	public DeviceNotificationsRetrivalCommand(DeviceData deviceData,
 			String lastNotificationPollTimestamp) {
+		super(lastNotificationPollTimestamp);
 		this.deviceData = deviceData;
-		this.lastNotificationPollTimestamp = lastNotificationPollTimestamp;
-	}
-
-	@Override
-	protected RequestType getRequestType() {
-		return RequestType.GET;
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
 		dest.writeParcelable(deviceData, flags);
-		dest.writeString(lastNotificationPollTimestamp);
+		super.writeToParcel(dest, flags);
 	}
 
 	@Override
@@ -73,18 +59,5 @@ public abstract class DeviceNotificationsRetrivalCommand extends
 				listType);
 		resultData.putParcelableArrayList(NOTIFICATIONS_KEY, notifications);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
-	}
-
-	/**
-	 * Get a list of {@link Notification} sent from given {@link DeviceData}
-	 * object.
-	 * 
-	 * @param resultData
-	 *            {@link Bundle} object containing required response data.
-	 * @return A list of {@link Notification} sent from given {@link DeviceData}
-	 *         .
-	 */
-	public final static List<Notification> getNotifications(Bundle resultData) {
-		return resultData.getParcelableArrayList(NOTIFICATIONS_KEY);
 	}
 }

@@ -9,9 +9,9 @@ import android.util.Log;
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Notification;
-import com.dataart.android.devicehive.client.DeviceClient;
+import com.dataart.android.devicehive.client.SingleDeviceClient;
 
-public class SampleDeviceClient extends DeviceClient {
+public class SampleDeviceClient extends SingleDeviceClient {
 
 	private static final String TAG = "SampleDeviceClient";
 
