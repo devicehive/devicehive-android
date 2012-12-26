@@ -83,7 +83,8 @@ public abstract class MultipleDeviceClient extends DeviceClient {
 	/**
 	 * Send command to the given device.
 	 * 
-	 * @param device Target device.
+	 * @param device
+	 *            Target device.
 	 * @param command
 	 *            {@link Command} to be sent.
 	 */
@@ -103,8 +104,19 @@ public abstract class MultipleDeviceClient extends DeviceClient {
 	}
 
 	/* package */void onReloadDeviceDataFinishedInternal(DeviceData deviceData) {
-		// TODO: update device data
+		final DeviceData device = getDeviceDataWithId(deviceData.getId());
+		devices.remove(device);
+		devices.add(deviceData);
 		onFinishReloadingDeviceData(deviceData);
+	}
+
+	private DeviceData getDeviceDataWithId(String deviceId) {
+		for (DeviceData device : devices) {
+			if (device.getId().equals(deviceId)) {
+				return device;
+			}
+		}
+		return null;
 	}
 
 	/**
