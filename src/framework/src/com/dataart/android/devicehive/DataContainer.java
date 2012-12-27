@@ -10,7 +10,7 @@ import android.os.Parcelable;
 	protected ObjectWrapper<Serializable> data;
 
 	protected DataContainer() {
-
+		this(null);
 	}
 
 	protected DataContainer(Serializable data) {
@@ -36,7 +36,7 @@ import android.os.Parcelable;
 	 *         constructed using StringMaps, ArrayLists and primitives.
 	 */
 	public Object getData() {
-		return data.getObject();
+		return data != null ? data.getObject() : data;
 	}
 
 	@Override

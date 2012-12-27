@@ -55,7 +55,7 @@ public abstract class DeviceNotificationsRetrivalCommand extends
 		Type listType = new TypeToken<ArrayList<Notification>>() {
 		}.getType();
 
-		ArrayList<Notification> notifications = new Gson().fromJson(response,
+		ArrayList<Notification> notifications = gson.fromJson(response,
 				listType);
 		resultData.putParcelableArrayList(NOTIFICATIONS_KEY, notifications);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;

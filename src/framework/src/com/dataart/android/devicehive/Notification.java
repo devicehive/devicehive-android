@@ -71,7 +71,7 @@ public class Notification implements Parcelable {
 	 * @return Notification parameters dictionary.
 	 */
 	public Serializable getParameters() {
-		return parameters;
+		return parameters != null ? parameters.getObject() : parameters;
 	}
 
 	@Override
@@ -84,7 +84,8 @@ public class Notification implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(name);
 		dest.writeSerializable(timestamp);
-		dest.writeSerializable(parameters.getObject());
+		dest.writeSerializable(parameters != null ? parameters.getObject()
+				: parameters);
 	}
 
 	public static Parcelable.Creator<Notification> CREATOR = new Parcelable.Creator<Notification>() {

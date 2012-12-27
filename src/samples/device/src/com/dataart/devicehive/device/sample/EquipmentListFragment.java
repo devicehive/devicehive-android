@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.dataart.android.devicehive.EquipmentData;
 
-public class EquipmentListFragment extends ListFragment  {
+public class EquipmentListFragment extends ListFragment {
 
 	private List<EquipmentData> equipment;
 	private EquipmentAdapter equipmentAdapter;
@@ -35,8 +35,8 @@ public class EquipmentListFragment extends ListFragment  {
 			equipmentAdapter = new EquipmentAdapter(getActivity(), equipment);
 			setListAdapter(equipmentAdapter);
 		}
-	}	
-	
+	}
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -45,7 +45,6 @@ public class EquipmentListFragment extends ListFragment  {
 			setListAdapter(equipmentAdapter);
 		}
 	}
-
 
 	private static class EquipmentAdapter extends BaseAdapter {
 
@@ -56,7 +55,7 @@ public class EquipmentListFragment extends ListFragment  {
 			this.equipment = equipment;
 			this.inflater = LayoutInflater.from(context);
 		}
-		
+
 		public void setEquipment(List<EquipmentData> equipment) {
 			this.equipment = equipment;
 			notifyDataSetChanged();
@@ -81,8 +80,8 @@ public class EquipmentListFragment extends ListFragment  {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
 			if (convertView == null) {
-				convertView = inflater
-						.inflate(R.layout.equipment_list_item, null);
+				convertView = inflater.inflate(R.layout.equipment_list_item,
+						null);
 				holder = new ViewHolder();
 				holder.name = (TextView) convertView
 						.findViewById(R.id.equipment_name_text_view);
@@ -90,6 +89,8 @@ public class EquipmentListFragment extends ListFragment  {
 						.findViewById(R.id.equipment_code_text_view);
 				holder.type = (TextView) convertView
 						.findViewById(R.id.equipment_type_text_view);
+				holder.data = (TextView) convertView
+						.findViewById(R.id.equipment_data_text_view);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -98,6 +99,8 @@ public class EquipmentListFragment extends ListFragment  {
 			holder.name.setText(equipmentData.getName());
 			holder.code.setText(equipmentData.getCode());
 			holder.type.setText(equipmentData.getType());
+			holder.data.setText(equipmentData.getData() != null ? equipmentData
+					.getData().toString() : "--");
 			return convertView;
 		}
 
@@ -105,6 +108,7 @@ public class EquipmentListFragment extends ListFragment  {
 			TextView name;
 			TextView code;
 			TextView type;
+			TextView data;
 		}
 
 	}

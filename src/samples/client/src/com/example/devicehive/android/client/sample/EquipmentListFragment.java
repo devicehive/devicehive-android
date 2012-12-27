@@ -77,6 +77,8 @@ public class EquipmentListFragment extends ListFragment {
 						.findViewById(R.id.equipment_code_text_view);
 				holder.type = (TextView) convertView
 						.findViewById(R.id.equipment_type_text_view);
+				holder.data = (TextView) convertView
+						.findViewById(R.id.equipment_data_text_view);
 				holder.state = (TextView) convertView
 						.findViewById(R.id.equipment_state_text_view);
 				convertView.setTag(holder);
@@ -87,6 +89,8 @@ public class EquipmentListFragment extends ListFragment {
 			holder.name.setText(equipmentData.getName());
 			holder.code.setText(equipmentData.getCode());
 			holder.type.setText(equipmentData.getType());
+			holder.data.setText(equipmentData.getData() != null ? equipmentData
+					.getData().toString() : "--");
 			final EquipmentState state = getEquipmentState(equipmentData);
 			holder.state.setText(equipmentStateAsString(state));
 			return convertView;
@@ -96,6 +100,7 @@ public class EquipmentListFragment extends ListFragment {
 			TextView name;
 			TextView code;
 			TextView type;
+			TextView data;
 			TextView state;
 		}
 

@@ -81,7 +81,7 @@ public class Command implements Parcelable {
 	 * @return Command parameters dictionary.
 	 */
 	public Serializable getParameters() {
-		return parameters;
+		return parameters != null ? parameters.getObject() : null;
 	}
 
 	/**
@@ -132,7 +132,8 @@ public class Command implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(timestamp);
 		dest.writeString(command);
-		dest.writeSerializable(parameters.getObject());
+		dest.writeSerializable(parameters != null ? parameters.getObject()
+				: parameters);
 		dest.writeInt(lifetime);
 		dest.writeInt(flags);
 		dest.writeString(status);

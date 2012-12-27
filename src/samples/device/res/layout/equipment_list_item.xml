@@ -71,5 +71,28 @@
             android:text="Equipment type" />
 
     </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/equipment_data_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:layout_marginLeft="5dp"
+            android:gravity="right"
+            android:text="--" />
+
+    </LinearLayout>
 
 </LinearLayout>

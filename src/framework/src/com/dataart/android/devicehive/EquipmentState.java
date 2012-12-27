@@ -24,7 +24,8 @@ public class EquipmentState implements Parcelable {
 	 * @param timestamp
 	 * @param parameters
 	 */
-	/* package */EquipmentState(String code, String timestamp, Serializable parameters) {
+	/* package */EquipmentState(String code, String timestamp,
+			Serializable parameters) {
 		this.equipmentCode = code;
 		this.timestamp = timestamp;
 		this.parameters = new ObjectWrapper<Serializable>(parameters);
@@ -54,14 +55,15 @@ public class EquipmentState implements Parcelable {
 	 * @return Equipment state parameters.
 	 */
 	public Object getParameters() {
-		return parameters;
+		return parameters != null ? parameters.getObject() : parameters;
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(equipmentCode);
 		dest.writeString(timestamp);
-		dest.writeSerializable(parameters.getObject());
+		dest.writeSerializable(parameters != null ? parameters.getObject()
+				: parameters);
 	}
 
 	public static Parcelable.Creator<EquipmentState> CREATOR = new Parcelable.Creator<EquipmentState>() {

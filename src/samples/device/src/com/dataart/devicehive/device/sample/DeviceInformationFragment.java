@@ -15,11 +15,12 @@ public class DeviceInformationFragment extends SherlockFragment {
 
 	private TextView deviceIdTextView;
 	private TextView deviceStatusTextView;
+	private TextView deviceDataTextView;
 
 	private TextView deviceClassNameTextView;
 	private TextView deviceClassVersionTextView;
 	private TextView deviceClassIsPermanentTextView;
-
+	private TextView deviceClassDataTextView;
 
 	public void setDeviceData(DeviceData deviceData) {
 		this.deviceData = deviceData;
@@ -37,13 +38,15 @@ public class DeviceInformationFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View view = inflater
-				.inflate(R.layout.fragment_device_info, container, false);
+		View view = inflater.inflate(R.layout.fragment_device_info, container,
+				false);
 
 		deviceIdTextView = (TextView) view
 				.findViewById(R.id.device_id_text_view);
 		deviceStatusTextView = (TextView) view
 				.findViewById(R.id.device_status_text_view);
+		deviceDataTextView = (TextView) view
+				.findViewById(R.id.device_data_text_view);
 
 		deviceClassNameTextView = (TextView) view
 				.findViewById(R.id.device_class_name_text_view);
@@ -51,6 +54,8 @@ public class DeviceInformationFragment extends SherlockFragment {
 				.findViewById(R.id.device_class_version_text_view);
 		deviceClassIsPermanentTextView = (TextView) view
 				.findViewById(R.id.device_class_is_permanent_text_view);
+		deviceClassDataTextView = (TextView) view
+				.findViewById(R.id.device_class_data_text_view);
 		return view;
 	}
 
@@ -58,6 +63,9 @@ public class DeviceInformationFragment extends SherlockFragment {
 		if (deviceData != null) {
 			deviceIdTextView.setText(deviceData.getId());
 			deviceStatusTextView.setText(deviceData.getStatus());
+			deviceDataTextView
+					.setText(deviceData.getData() != null ? deviceData
+							.getData().toString() : "--");
 
 			deviceClassNameTextView.setText(deviceData.getDeviceClass()
 					.getName());
@@ -65,6 +73,9 @@ public class DeviceInformationFragment extends SherlockFragment {
 					.getVersion());
 			deviceClassIsPermanentTextView.setText(""
 					+ deviceData.getDeviceClass().isPermanent());
+			deviceClassDataTextView.setText(deviceData.getDeviceClass()
+					.getData() != null ? deviceData.getDeviceClass().getData()
+					.toString() : "--");
 		}
 	}
 

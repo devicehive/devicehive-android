@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,9 +19,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:text="Equipment name"
-            android:textStyle="bold"
-            android:textSize="18sp" />
-
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <LinearLayout
@@ -42,13 +39,12 @@
             android:id="@+id/equipment_code_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginLeft="5dp"
+            android:layout_weight="3"
             android:gravity="right"
             android:text="Equipment code" />
-
     </LinearLayout>
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,13 +61,34 @@
             android:id="@+id/equipment_type_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginLeft="5dp"
+            android:layout_weight="3"
             android:gravity="right"
             android:text="Equipment type" />
-
     </LinearLayout>
-    
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Data"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/equipment_data_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="3"
+            android:gravity="right"
+            android:text="--" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -88,11 +105,10 @@
             android:id="@+id/equipment_state_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginLeft="5dp"
+            android:layout_weight="3"
             android:gravity="right"
             android:text="--" />
-
     </LinearLayout>
 
 </LinearLayout>

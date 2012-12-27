@@ -33,11 +33,7 @@ public class DeviceClass extends DataContainer {
 	 */
 	public DeviceClass(int id, String name, String version,
 			boolean isPermanent, Integer offlineTimeout) {
-		this.id = id;
-		this.name = name;
-		this.version = version;
-		this.isPermanent = isPermanent;
-		this.offlineTimeout = offlineTimeout;
+		this(null, id, name, version, isPermanent, offlineTimeout);
 	}
 
 	/* package */DeviceClass(Serializable data, int id, String name,
