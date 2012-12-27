@@ -85,7 +85,7 @@ public class GetNetworkDevicesCommand extends DeviceClientCommand {
 	protected int fromJson(final String response, final Gson gson,
 			final Bundle resultData) {
 
-		final NetworkExtended networkExtended = new Gson().fromJson(response,
+		final NetworkExtended networkExtended = gson.fromJson(response,
 				NetworkExtended.class);
 		resultData.putParcelable(NETWORK_KEY, networkExtended);
 		resultData.putParcelableArrayList(DEVICES_KEY, networkExtended.devices);

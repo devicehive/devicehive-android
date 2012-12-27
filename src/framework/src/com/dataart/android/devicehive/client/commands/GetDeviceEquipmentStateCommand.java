@@ -80,7 +80,7 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 
 		Type listType = new TypeToken<ArrayList<EquipmentState>>() {
 		}.getType();
-		final ArrayList<EquipmentState> equipmentStates = new Gson().fromJson(
+		final ArrayList<EquipmentState> equipmentStates = gson.fromJson(
 				response, listType);
 		resultData.putParcelable(DEVICE_KEY, deviceData);
 		resultData.putParcelableArrayList(EQUIPMENT_STATE_KEY, equipmentStates);

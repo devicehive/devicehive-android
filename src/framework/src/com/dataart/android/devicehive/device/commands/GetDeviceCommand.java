@@ -72,7 +72,7 @@ public class GetDeviceCommand extends DeviceCommand {
 	protected int fromJson(final String response, final Gson gson,
 			final Bundle resultData) {
 
-		final DeviceData device = new Gson().fromJson(response,
+		final DeviceData device = gson.fromJson(response,
 				DeviceData.class);
 		resultData.putParcelable(DEVICE_KEY, device);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;

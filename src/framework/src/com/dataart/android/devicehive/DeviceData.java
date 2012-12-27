@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * Represents device data. Used to initialize {@link Client} object.
+ * Represents device data.
  */
 public class DeviceData extends DataContainer {
 

@@ -16,14 +16,14 @@ public class Notification implements Parcelable {
 	@SerializedName("notification")
 	private String name;
 	private String timestamp;
-	private Object parameters;
+	private ObjectWrapper<Serializable> parameters;
 
 	protected Notification(int id, String name, String timestamp,
-			Object parameters) {
+			Serializable parameters) {
 		this.id = id;
 		this.name = name;
 		this.timestamp = timestamp;
-		this.parameters = parameters;
+		this.parameters = new ObjectWrapper<Serializable>(parameters);
 	}
 
 	/**
@@ -34,7 +34,7 @@ public class Notification implements Parcelable {
 	 * @param parameters
 	 *            Notification parameters.
 	 */
-	public Notification(String name, Object parameters) {
+	public Notification(String name, Serializable parameters) {
 		this(-1, name, null, parameters);
 	}
 
@@ -70,7 +70,7 @@ public class Notification implements Parcelable {
 	 * 
 	 * @return Notification parameters dictionary.
 	 */
-	public Object getParameters() {
+	public Serializable getParameters() {
 		return parameters;
 	}
 
@@ -84,7 +84,7 @@ public class Notification implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(name);
 		dest.writeSerializable(timestamp);
-		dest.writeSerializable((Serializable) parameters);
+		dest.writeSerializable(parameters.getObject());
 	}
 
 	public static Parcelable.Creator<Notification> CREATOR = new Parcelable.Creator<Notification>() {

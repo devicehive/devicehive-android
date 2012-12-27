@@ -87,7 +87,7 @@ public class GetDeviceClassEquipmentCommand extends DeviceClientCommand {
 	protected int fromJson(final String response, final Gson gson,
 			final Bundle resultData) {
 
-		final DeviceClassEquipment deviceClassEquipment = new Gson().fromJson(
+		final DeviceClassEquipment deviceClassEquipment = gson.fromJson(
 				response, DeviceClassEquipment.class);
 		resultData.putParcelable(DEVICE_CLASS_KEY, deviceClassEquipment);
 		resultData.putParcelableArrayList(EQUIPMENT_KEY,

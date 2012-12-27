@@ -60,7 +60,7 @@ public class GetDevicesCommand extends DeviceClientCommand {
 
 		Type listType = new TypeToken<ArrayList<DeviceData>>() {
 		}.getType();
-		final ArrayList<DeviceData> devices = new Gson().fromJson(response,
+		final ArrayList<DeviceData> devices = gson.fromJson(response,
 				listType);
 		resultData.putParcelableArrayList(DEVICES_KEY, devices);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;

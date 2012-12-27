@@ -12,26 +12,26 @@ public class Command implements Parcelable {
 	private int id;
 	private String timestamp;
 	private String command;
-	private Object parameters;
+	private ObjectWrapper<Serializable> parameters;
 	private int lifetime;
 	private int flags;
 	private String status;
 	private String result;
 
 	/* package */Command(int id, String timestamp, String command,
-			Object parameters, int lifetime, int flags, String status,
+			Serializable parameters, int lifetime, int flags, String status,
 			String result) {
 		this.id = id;
 		this.timestamp = timestamp;
 		this.command = command;
-		this.parameters = parameters;
+		this.parameters = new ObjectWrapper<Serializable>(parameters);
 		this.lifetime = lifetime;
 		this.flags = flags;
 		this.status = status;
 		this.result = result;
 	}
 
-	public Command(String command, Object parameters, int lifetime,
+	public Command(String command, Serializable parameters, int lifetime,
 			int flags) {
 		this(-1, null, command, parameters, lifetime, flags, null, null);
 	}
@@ -44,7 +44,7 @@ public class Command implements Parcelable {
 	 * @param parameters
 	 *            Parameters dictionary.
 	 */
-	public Command(String command, Object parameters) {
+	public Command(String command, Serializable parameters) {
 		this(-1, null, command, parameters, 0, 0, null, null);
 	}
 
@@ -80,7 +80,7 @@ public class Command implements Parcelable {
 	 * 
 	 * @return Command parameters dictionary.
 	 */
-	public Object getParameters() {
+	public Serializable getParameters() {
 		return parameters;
 	}
 
@@ -132,7 +132,7 @@ public class Command implements Parcelable {
 		dest.writeInt(id);
 		dest.writeString(timestamp);
 		dest.writeString(command);
-		dest.writeSerializable((Serializable) parameters);
+		dest.writeSerializable(parameters.getObject());
 		dest.writeInt(lifetime);
 		dest.writeInt(flags);
 		dest.writeString(status);

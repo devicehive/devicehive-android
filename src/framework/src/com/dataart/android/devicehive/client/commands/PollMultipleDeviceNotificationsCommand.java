@@ -132,7 +132,7 @@ public class PollMultipleDeviceNotificationsCommand extends
 		Type listType = new TypeToken<ArrayList<DeviceGuidNotification>>() {
 		}.getType();
 
-		ArrayList<DeviceGuidNotification> notifications = new Gson().fromJson(
+		ArrayList<DeviceGuidNotification> notifications = gson.fromJson(
 				response, listType);
 		resultData.putParcelableArrayList(NOTIFICATIONS_KEY,
 				asDeviceNotificationList(notifications));

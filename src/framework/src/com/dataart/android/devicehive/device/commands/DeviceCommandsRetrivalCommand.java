@@ -58,7 +58,7 @@ public abstract class DeviceCommandsRetrivalCommand extends DeviceCommand {
 		Type listType = new TypeToken<ArrayList<Command>>() {
 		}.getType();
 
-		ArrayList<Command> commands = new Gson().fromJson(response, listType);
+		ArrayList<Command> commands = gson.fromJson(response, listType);
 		resultData.putParcelableArrayList(COMMANDS_KEY, commands);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
 	}

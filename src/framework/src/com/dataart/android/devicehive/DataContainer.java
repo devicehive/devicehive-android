@@ -7,13 +7,13 @@ import android.os.Parcelable;
 
 /* package */abstract class DataContainer implements Parcelable {
 
-	protected Object data;
+	protected ObjectWrapper<Serializable> data;
 
 	protected DataContainer() {
 
 	}
 
-	protected DataContainer(Object data) {
+	protected DataContainer(Serializable data) {
 		setData(data);
 	}
 
@@ -25,8 +25,8 @@ import android.os.Parcelable;
 	 * @param data
 	 *            An object that can be serialized to JSON.
 	 */
-	public void setData(Object data) {
-		this.data = data;
+	public void setData(Serializable data) {
+		this.data = new ObjectWrapper<Serializable>(data);
 	}
 
 	/**
@@ -36,7 +36,7 @@ import android.os.Parcelable;
 	 *         constructed using StringMaps, ArrayLists and primitives.
 	 */
 	public Object getData() {
-		return data;
+		return data.getObject();
 	}
 
 	@Override
@@ -46,7 +46,7 @@ import android.os.Parcelable;
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeSerializable((Serializable)data);
+		dest.writeSerializable(data != null ? data.getObject() : data);
 	}
 
 }

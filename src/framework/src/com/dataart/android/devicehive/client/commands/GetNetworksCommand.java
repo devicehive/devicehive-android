@@ -56,7 +56,7 @@ public class GetNetworksCommand extends DeviceClientCommand {
 			final Bundle resultData) {
 		Type listType = new TypeToken<ArrayList<Network>>() {
 		}.getType();
-		final ArrayList<Network> networks = new Gson().fromJson(response,
+		final ArrayList<Network> networks = gson.fromJson(response,
 				listType);
 		resultData.putParcelableArrayList(NETWORKS_KEY, networks);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;

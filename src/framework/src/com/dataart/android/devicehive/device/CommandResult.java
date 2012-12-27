@@ -2,6 +2,8 @@ package com.dataart.android.devicehive.device;
 
 import java.io.Serializable;
 
+import com.dataart.android.devicehive.ObjectWrapper;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,7 +23,7 @@ public class CommandResult implements Parcelable {
 	public static final String STATUS_FAILED = "Failed";
 
 	private final String status;
-	private final Object result;
+	private final ObjectWrapper<Serializable> result;
 
 	/**
 	 * Constructs command result with given status and result.
@@ -33,7 +35,7 @@ public class CommandResult implements Parcelable {
 	 */
 	public CommandResult(String status, Serializable result) {
 		this.status = status;
-		this.result = result;
+		this.result = new ObjectWrapper<Serializable>(result);
 	}
 
 	/**
@@ -50,7 +52,7 @@ public class CommandResult implements Parcelable {
 	 * 
 	 * @return Command execution result.
 	 */
-	public Object getResult() {
+	public Serializable getResult() {
 		return result;
 	}
 
@@ -62,7 +64,7 @@ public class CommandResult implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(status);
-		dest.writeSerializable((Serializable)result);
+		dest.writeSerializable(result.getObject());
 	}
 
 	public static Parcelable.Creator<CommandResult> CREATOR = new Parcelable.Creator<CommandResult>() {
@@ -74,7 +76,8 @@ public class CommandResult implements Parcelable {
 
 		@Override
 		public CommandResult createFromParcel(Parcel source) {
-			return new CommandResult(source.readString(), source.readSerializable());
+			return new CommandResult(source.readString(),
+					source.readSerializable());
 		}
 	};
 }
