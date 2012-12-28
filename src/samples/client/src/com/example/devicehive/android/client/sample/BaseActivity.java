@@ -148,15 +148,18 @@ public class BaseActivity extends SherlockFragmentActivity {
     }
     
     protected void setActionBarProgressVisibility(boolean visible) {
-        final com.actionbarsherlock.view.MenuItem item = optionsMenu.findItem(MENU_ID_REFRESH);
-        if (item != null) {
-            if (visible) {
-                item.setActionView(R.layout.menu_progress);
-            } else {
-                item.setActionView(null);
-                progressOperationsCount = 0;
-            }
-        }
+		if (optionsMenu != null) {
+			final com.actionbarsherlock.view.MenuItem item = optionsMenu
+					.findItem(MENU_ID_REFRESH);
+			if (item != null) {
+				if (visible) {
+					item.setActionView(R.layout.menu_progress);
+				} else {
+					item.setActionView(null);
+					progressOperationsCount = 0;
+				}
+			}
+		}
     }
     
     protected void showErrorDialog(String title, String message) {
