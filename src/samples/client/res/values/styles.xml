@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="@style/Theme.Sherlock.Light.DarkActionBar" />
     
@@ -16,6 +16,14 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">2px</item>
         <item name="android:background">@android:drawable/divider_horizontal_bright</item>
+    </style>
+    
+     <style name="SingleLineEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:inputType">text</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:imeOptions">actionDone</item>
     </style>
 
 </resources>

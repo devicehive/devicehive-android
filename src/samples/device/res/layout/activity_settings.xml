@@ -21,9 +21,7 @@
 
         <EditText
             android:id="@+id/server_url_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="" />
+            style="@style/SingleLineEditText"/>
     </LinearLayout>
 
     <View style="@style/ListItemDivider" />
