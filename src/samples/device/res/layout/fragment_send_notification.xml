@@ -10,11 +10,8 @@
 
        <EditText
             android:id="@+id/notification_name_edit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            style="@style/SingleLineEditText"
             android:layout_marginTop="10dp"
-            android:ems="10"
             android:hint="Notification name" >
 
         </EditText>

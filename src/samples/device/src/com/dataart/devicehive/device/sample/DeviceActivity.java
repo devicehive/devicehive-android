@@ -52,7 +52,7 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 	private EquipmentListFragment equipmentListFragment;
 
 	private List<Command> receivedCommands = new LinkedList<Command>();
-	
+
 	private SampleDevicePreferences prefs;
 
 	@Override
@@ -62,7 +62,7 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 
 		SampleDeviceApplication app = (SampleDeviceApplication) getApplication();
 		device = app.getDevice();
-		
+
 		prefs = new SampleDevicePreferences(this);
 
 		ActionBar ab = getSupportActionBar();
@@ -101,6 +101,7 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 		super.onResume();
 		device.addDeviceListener(this);
 		device.addCommandListener(this);
+		device.addNotificationListener(this);
 		deviceInfoFragment.setDeviceData(device.getDeviceData());
 		if (!device.isRegistered()) {
 			device.registerDevice();
@@ -114,6 +115,7 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 		super.onPause();
 		device.removeDeviceListener(this);
 		device.removeCommandListener(this);
+		device.removeNotificationListener(this);
 		device.stopProcessingCommands();
 		if (isFinishing()) {
 			device.unregisterDevice();
@@ -160,13 +162,14 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 	@Override
 	public void onDeviceSentNotification(Notification notification) {
 		Log.d(TAG, "Finish sending notification: " + notification.getName());
+		showDialog("Success!", "Notification \"" + notification.getName()
+				+ "\" has been sent.");
 	}
 
 	@Override
 	public void onDeviceFailedToSendNotification(Notification notification) {
 		Log.d(TAG, "Fail sending notification: " + notification.getName());
-		showErrorDialog("Error!",
-				"Failed to send command: " + notification.getName());
+		showErrorDialog("Failed to send notification: " + notification.getName());
 	}
 
 	@Override
@@ -174,7 +177,7 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 		device.sendNotification(notification);
 	}
 
-	protected void showErrorDialog(String title, String message) {
+	protected void showDialog(String title, String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final AlertDialog dialog = builder.setTitle(title).setMessage(message)
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -184,6 +187,10 @@ public class DeviceActivity extends SherlockFragmentActivity implements
 					}
 				}).create();
 		dialog.show();
+	}
+
+	protected void showErrorDialog(String message) {
+		showDialog("Error!", message);
 	}
 
 	@Override

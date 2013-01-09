@@ -162,7 +162,11 @@ public class BaseActivity extends SherlockFragmentActivity {
 		}
     }
     
-    protected void showErrorDialog(String title, String message) {
+    protected void showErrorDialog(String message) {
+		showDialog("Error!", message);
+	}
+    
+    protected void showDialog(String title, String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final AlertDialog dialog = builder
 				.setTitle(title)

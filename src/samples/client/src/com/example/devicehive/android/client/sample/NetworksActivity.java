@@ -172,10 +172,10 @@ public class NetworksActivity extends BaseActivity {
 			Log.e(TAG, "Failed to execute network command", exception);
 			if (exception instanceof ClientProtocolException
 					&& exception.getCause() instanceof MalformedChallengeException) {
-				showDialog("Authentication error!",
+				showSettingsDialog("Authentication error!",
 						"Looks like your credentials are not valid.");
 			} else {
-				showDialog("Error", "Failed to connect to the server.");
+				showSettingsDialog("Error", "Failed to connect to the server.");
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
@@ -183,7 +183,7 @@ public class NetworksActivity extends BaseActivity {
 			Log.e(TAG, "Failed to execute network command. Status code: "
 					+ statusCode);
 			if (statusCode == 404) {
-				showDialog("Error", "Failed to connect to the server.");
+				showSettingsDialog("Error", "Failed to connect to the server.");
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
@@ -207,7 +207,7 @@ public class NetworksActivity extends BaseActivity {
 		}
 	}
 
-	private void showDialog(String title, String message) {
+	private void showSettingsDialog(String title, String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final AlertDialog dialog = builder
 				.setTitle(title)
