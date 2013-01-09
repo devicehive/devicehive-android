@@ -182,7 +182,7 @@ public class DeviceActivity extends BaseActivity implements
 					.getThrowable(resultData);
 			Log.e(TAG, "Failed to execute network command", exception);
 			if (tagId == TAG_GET_DEVICE) {
-				showErrorDialog("Error!", "Failed to retrieve device data");
+				showErrorDialog("Failed to retrieve device data");
 			} else if (tagId == TAG_GET_EQUIPMENT) {
 				// retry
 				startEquipmentRequest();
@@ -194,8 +194,7 @@ public class DeviceActivity extends BaseActivity implements
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
 			int statusCode = DeviceClientCommand.getStatusCode(resultData);
-			showErrorDialog("Error!", "Server returned status code: "
-					+ statusCode);
+			showErrorDialog("Server returned status code: " + statusCode);
 			break;
 		case DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE:
 			if (tagId == TAG_GET_DEVICE) {
@@ -228,13 +227,14 @@ public class DeviceActivity extends BaseActivity implements
 	@Override
 	public void onFinishSendindCommand(Command command) {
 		Log.d(TAG, "Finish sending command: " + command.getCommand());
+		showDialog("Success!", "Command \"" + command.getCommand()
+				+ "\" has been sent.");
 	}
 
 	@Override
 	public void onFailSendindCommand(Command command) {
 		Log.d(TAG, "Fail sending command: " + command.getCommand() + "\n");
-		showErrorDialog("Error!",
-				"Failed to send command: " + command.getCommand());
+		showErrorDialog("Failed to send command: " + command.getCommand());
 	}
 
 	@Override
