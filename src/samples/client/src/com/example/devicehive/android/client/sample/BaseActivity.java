@@ -1,16 +1,28 @@
 package com.example.devicehive.android.client.sample;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
 
 public class BaseActivity extends SherlockFragmentActivity {
+
+	private final static String NAMESPACE = BaseActivity.class.getName();
+
+	private final static String EXTRA_PARENT_ACTIVITY = NAMESPACE
+			.concat(".EXTRA_PARENT_ACTIVITY");
+
+	private final static String EXTRA_PARENT_ACTIVITY_EXTRAS = NAMESPACE
+			.concat(".EXTRA_PARENT_ACTIVITY_EXTRAS");
 
 	private DeviceHiveResultReceiver resultReceiver = null;
 
@@ -22,6 +34,15 @@ public class BaseActivity extends SherlockFragmentActivity {
 	};
 
 	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		final ActionBar actionBar = getSupportActionBar();
+		if (actionBar != null && showsHomeAsUpButton()) {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+	}
+
+	@Override
 	protected void onStop() {
 		super.onStop();
 		if (resultReceiver != null) {
@@ -30,8 +51,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	protected final <T extends NetworkCommand> void startCommand(
-			final T command) {
+	protected final <T extends NetworkCommand> void startCommand(final T command) {
 		command.start(getApplicationContext(), getNetworkCommandConfig());
 	}
 
@@ -73,7 +93,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 
 	private static final int MENU_ID_SETTINGS = 0x01;
 	private static final int MENU_ID_REFRESH = 0x02;
-	
+
 	private com.actionbarsherlock.view.Menu optionsMenu;
 
 	@Override
@@ -94,16 +114,63 @@ public class BaseActivity extends SherlockFragmentActivity {
 		return super.onCreateOptionsMenu(menu);
 	}
 
+	protected final static <T extends Activity> Intent setParentActivity(
+			final Intent intent, final Class<T> parentActivityClass) {
+		return setParentActivity(intent, parentActivityClass, null);
+	}
+
+	protected final static <T extends Activity> Intent setParentActivity(
+			final Intent intent, final Class<T> parentActivityClass,
+			Bundle parentActivityExtras) {
+		intent.putExtra(EXTRA_PARENT_ACTIVITY, parentActivityClass.getName());
+		if (parentActivityExtras != null) {
+			intent.putExtra(EXTRA_PARENT_ACTIVITY_EXTRAS, parentActivityExtras);
+		}
+		return intent;
+	}
+
+	protected boolean showsHomeAsUpButton() {
+		return true;
+	}
+
+	protected Intent getHomeUpNavigationTarget() {
+		final String parentActivityClass = getIntent().getStringExtra(
+				EXTRA_PARENT_ACTIVITY);
+		final Intent intent;
+		if (parentActivityClass == null) {
+			intent = new Intent(this, NetworksActivity.class);
+		} else {
+			intent = new Intent();
+			intent.setComponent(new ComponentName(this, parentActivityClass));
+		}
+		final Bundle parentExtras = getIntent().getBundleExtra(
+				EXTRA_PARENT_ACTIVITY_EXTRAS);
+		if (parentExtras != null) {
+			intent.putExtras(parentExtras);
+		}
+		return intent;
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(
 			com.actionbarsherlock.view.MenuItem item) {
-		if (item.getItemId() == MENU_ID_SETTINGS) {
-			onShowSettings();
-			return true;
-		} else if (item.getItemId() == MENU_ID_REFRESH) {
-			onRefresh();
+		switch (item.getItemId()) {
+		case android.R.id.home: {
+			final Intent intent = getHomeUpNavigationTarget();
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(intent);
+			break;
 		}
-		return super.onOptionsItemSelected(item);
+		case MENU_ID_SETTINGS:
+			onShowSettings();
+			break;
+		case MENU_ID_REFRESH:
+			onRefresh();
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	protected boolean showsSettingsActionItem() {
@@ -121,33 +188,33 @@ public class BaseActivity extends SherlockFragmentActivity {
 	protected void onRefresh() {
 
 	}
-	
+
 	protected boolean showsActionBarProgress() {
-        return false;
-    }
+		return false;
+	}
 
-    private int progressOperationsCount = 0;
+	private int progressOperationsCount = 0;
 
-    protected void incrementActionBarProgressOperationsCount(int count) {
-        this.progressOperationsCount += count;
-        setActionBarProgressVisibility(count > 0);
-    }
-    
-    protected void decrementActionBarProgressOperationsCount() {
-    	progressOperationsCount -= 1;
-        if (progressOperationsCount == 0) {
-            setActionBarProgressVisibility(false);
-        }
-        if (progressOperationsCount < 0) {
-            progressOperationsCount = 0;
-        }
-    }
-    
-    protected int getActionBarProgressOperationsCount() {
-        return progressOperationsCount;
-    }
-    
-    protected void setActionBarProgressVisibility(boolean visible) {
+	protected void incrementActionBarProgressOperationsCount(int count) {
+		this.progressOperationsCount += count;
+		setActionBarProgressVisibility(count > 0);
+	}
+
+	protected void decrementActionBarProgressOperationsCount() {
+		progressOperationsCount -= 1;
+		if (progressOperationsCount == 0) {
+			setActionBarProgressVisibility(false);
+		}
+		if (progressOperationsCount < 0) {
+			progressOperationsCount = 0;
+		}
+	}
+
+	protected int getActionBarProgressOperationsCount() {
+		return progressOperationsCount;
+	}
+
+	protected void setActionBarProgressVisibility(boolean visible) {
 		if (optionsMenu != null) {
 			final com.actionbarsherlock.view.MenuItem item = optionsMenu
 					.findItem(MENU_ID_REFRESH);
@@ -160,25 +227,21 @@ public class BaseActivity extends SherlockFragmentActivity {
 				}
 			}
 		}
-    }
-    
-    protected void showErrorDialog(String message) {
+	}
+
+	protected void showErrorDialog(String message) {
 		showDialog("Error!", message);
 	}
-    
-    protected void showDialog(String title, String message) {
+
+	protected void showDialog(String title, String message) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		final AlertDialog dialog = builder
-				.setTitle(title)
-				.setMessage(message)
-				.setPositiveButton("OK",
-						new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-							}
-						}).create();
+		final AlertDialog dialog = builder.setTitle(title).setMessage(message)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).create();
 		dialog.show();
 	}
 

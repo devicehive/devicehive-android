@@ -36,8 +36,13 @@ public class DeviceActivity extends BaseActivity implements
 			+ ".EXTRA_DEVICE";
 
 	public static void start(Context context, DeviceData deviceData) {
-		Intent intent = new Intent(context, DeviceActivity.class);
+		final Intent intent = new Intent(context, DeviceActivity.class);
+		final Bundle parentExtras = new Bundle(1);
+		parentExtras.putParcelable(NetworkDevicesActivity.EXTRA_NETWORK,
+				deviceData.getNetwork());
 		intent.putExtra(EXTRA_DEVICE, deviceData);
+		setParentActivity(intent, NetworkDevicesActivity.class, parentExtras);
+		
 		context.startActivity(intent);
 	}
 
