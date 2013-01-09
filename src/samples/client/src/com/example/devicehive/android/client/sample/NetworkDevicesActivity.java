@@ -24,12 +24,13 @@ import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 
 public class NetworkDevicesActivity extends BaseActivity {
 
-	private static final String EXTRA_NETWORK = NetworkDevicesActivity.class
+	public static final String EXTRA_NETWORK = NetworkDevicesActivity.class
 			.getName() + ".EXTRA_NETWORK";
 
 	public static void start(Context context, Network network) {
 		Intent intent = new Intent(context, NetworkDevicesActivity.class);
 		intent.putExtra(EXTRA_NETWORK, network);
+		setParentActivity(intent, NetworksActivity.class);
 		context.startActivity(intent);
 	}
 

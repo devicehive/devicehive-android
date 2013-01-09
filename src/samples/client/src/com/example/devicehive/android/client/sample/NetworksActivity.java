@@ -89,13 +89,20 @@ public class NetworksActivity extends BaseActivity {
 		return true;
 	}
 
+	@Override
 	protected void onShowSettings() {
 		startSettingsActivity();
 	}
 
+	@Override
 	protected void onRefresh() {
 		startNetworksRequest();
 	}
+	
+	@Override
+	protected boolean showsHomeAsUpButton() {
+		return false;
+	} 
 
 	private void startSettingsActivity() {
 		startActivity(new Intent(this, SettingsActivity.class));
