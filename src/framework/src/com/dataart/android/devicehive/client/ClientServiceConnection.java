@@ -38,6 +38,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private boolean isPollRequestInProgress = false;
 
 	private String lastNotificationPollTimestamp;
+	private Integer notificationPollWaitTimeout;
 
 	public ClientServiceConnection(Context context) {
 		super(context);
@@ -54,6 +55,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 
 	/* package */String getLastNotificationPollTimestamp() {
 		return lastNotificationPollTimestamp;
+	}
+
+	/* package */void setNotificationPollWaitTimeout(Integer timeout) {
+		this.notificationPollWaitTimeout = timeout;
 	}
 
 	/* package */void sendCommand(DeviceData deviceData, Command command) {
@@ -132,14 +137,15 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	protected abstract NotificationsRetrivalCommand getPollNotificationsCommand(
-			String lastNotificationPollTimestamp);
+			String lastNotificationPollTimestamp, Integer waitTimeout);
 
 	protected abstract void didReceiveNotification(Notification notification);
 
 	private void startPollNotificationsRequest() {
 		logD("Starting polling request with lastNotificationPollTimestamp = "
 				+ lastNotificationPollTimestamp);
-		startNetworkCommand(getPollNotificationsCommand(lastNotificationPollTimestamp));
+		startNetworkCommand(getPollNotificationsCommand(
+				lastNotificationPollTimestamp, notificationPollWaitTimeout));
 	}
 
 	private int enqueueNotifications(List<Notification> notifications) {

@@ -103,6 +103,17 @@ public abstract class Device implements CommandRunner {
 	}
 
 	/**
+	 * Set command poll waiting timeout in seconds (default: 30 seconds,
+	 * maximum: 60 seconds). Specify 0 to disable waiting.
+	 * 
+	 * @param timeout
+	 *            Command poll waiting timeout in seconds.
+	 */
+	public void setCommandPollWaitTimeout(Integer timeout) {
+		this.serviceConnection.setCommandPollWaitTimeout(timeout);
+	}
+
+	/**
 	 * Initiate device registration. You should set Device Hive service URL
 	 * before performing device registration.
 	 * 

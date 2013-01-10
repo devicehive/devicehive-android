@@ -13,7 +13,9 @@ import com.dataart.android.devicehive.Notification;
  * {@link Notification}.
  */
 public class GetDeviceNotificationsCommand extends
-		DeviceNotificationsRetrivalCommand {
+		NotificationsRetrivalCommand {
+	
+	private final DeviceData deviceData;
 
 	/**
 	 * Construct a new command.
@@ -26,7 +28,8 @@ public class GetDeviceNotificationsCommand extends
 	 */
 	public GetDeviceNotificationsCommand(DeviceData deviceData,
 			String lastNotificationPollTimestamp) {
-		super(deviceData, lastNotificationPollTimestamp);
+		super(lastNotificationPollTimestamp);
+		this.deviceData = deviceData;
 	}
 
 	@Override
@@ -38,6 +41,12 @@ public class GetDeviceNotificationsCommand extends
 					+ encodedString(lastNotificationPollTimestamp);
 		}
 		return requestPath;
+	}
+	
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeParcelable(deviceData, flags);
+		super.writeToParcel(dest, flags);
 	}
 
 	public static Parcelable.Creator<GetDeviceNotificationsCommand> CREATOR = new Parcelable.Creator<GetDeviceNotificationsCommand>() {

@@ -37,6 +37,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private boolean isPollRequestInProgress = false;
 
 	private String lastCommandPollTimestamp;
+	private Integer commandPollWaitTimeout;
 
 	public DeviceServiceConnection(Context context) {
 		super(context);
@@ -44,6 +45,10 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 
 	public void setLastCommandPollTimestamp(String timestamp) {
 		this.lastCommandPollTimestamp = timestamp;
+	}
+
+	/* package */ void setCommandPollWaitTimeout(Integer timeout) {
+		this.commandPollWaitTimeout = timeout;
 	}
 
 	@Override
@@ -141,25 +146,25 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 			}
 		} else {
 			if (!isPollRequestInProgress) {
-				startPollCommandsRequest();
+				isPollRequestInProgress = true;
+				if (lastCommandPollTimestamp == null) {
+					// timestamp wasn't specified. Request and use server
+					// timestamp instead.
+					logD("Starting Get API info command");
+					startNetworkCommand(new GetApiInfoCommand());
+				} else {
+					startPollCommandsRequest();
+				}
 			}
 		}
 	}
 
 	private void startPollCommandsRequest() {
-		logD("Starting polling request");
-		isPollRequestInProgress = true;
-		if (lastCommandPollTimestamp == null) {
-			// timestamp wasn't specified. Request and use server timestamp
-			// instead.
-			logD("Starting Get API info command");
-			startNetworkCommand(new GetApiInfoCommand());
-		} else {
-			logD("Starting polling request with lastCommandPollTimestamp = "
-					+ lastCommandPollTimestamp);
-			startNetworkCommand(new PollDeviceCommandsCommand(
-					device.getDeviceData(), lastCommandPollTimestamp));
-		}
+		logD("Starting polling request with lastCommandPollTimestamp = "
+				+ lastCommandPollTimestamp);
+		startNetworkCommand(new PollDeviceCommandsCommand(
+				device.getDeviceData(), lastCommandPollTimestamp,
+				commandPollWaitTimeout));
 	}
 
 	private void updateCommandStatus(Command deviceCommand, CommandResult result) {
@@ -241,10 +246,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 						.getApiInfo(resultData);
 				logD("Get API info request finished: " + apiInfo);
 				lastCommandPollTimestamp = apiInfo.getServerTimestamp();
-				logD("Starting polling request with lastCommandPollTimestamp = "
-						+ lastCommandPollTimestamp);
-				startNetworkCommand(new PollDeviceCommandsCommand(
-						device.getDeviceData(), lastCommandPollTimestamp));
+				startPollCommandsRequest();
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:

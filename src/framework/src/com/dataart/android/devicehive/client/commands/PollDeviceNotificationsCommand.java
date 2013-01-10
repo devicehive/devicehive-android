@@ -14,7 +14,9 @@ import com.dataart.android.devicehive.Notification;
  * (currently 30 seconds). As a result returns list of {@link Notification}.
  */
 public class PollDeviceNotificationsCommand extends
-		DeviceNotificationsRetrivalCommand {
+		PollNotificationsCommand {
+
+	private final DeviceData deviceData;
 
 	/**
 	 * Construct a new command.
@@ -27,7 +29,24 @@ public class PollDeviceNotificationsCommand extends
 	 */
 	public PollDeviceNotificationsCommand(DeviceData deviceData,
 			String lastNotificationPollTimestamp) {
-		super(deviceData, lastNotificationPollTimestamp);
+		this(deviceData, lastNotificationPollTimestamp, null);
+	}
+
+	/**
+	 * Construct a new command.
+	 * 
+	 * @param deviceData
+	 *            {@link DeviceData} instance.
+	 * @param lastNotificationPollTimestamp
+	 *            Timestamp which defines starting point in the past for
+	 *            notifications.
+	 * @param waitTimeout
+	 *            Waiting timeout in seconds.
+	 */
+	public PollDeviceNotificationsCommand(DeviceData deviceData,
+			String lastNotificationPollTimestamp, Integer waitTimeout) {
+		super(lastNotificationPollTimestamp, waitTimeout);
+		this.deviceData = deviceData;
 	}
 
 	@Override
@@ -37,6 +56,10 @@ public class PollDeviceNotificationsCommand extends
 		if (lastNotificationPollTimestamp != null) {
 			requestPath += "?timestamp="
 					+ encodedString(lastNotificationPollTimestamp);
+		}
+		if (waitTimeout != null) {
+			requestPath += lastNotificationPollTimestamp != null ? "&" : "?";
+			requestPath += "waitTimeout=" + waitTimeout;
 		}
 		return requestPath;
 	}
@@ -52,7 +75,14 @@ public class PollDeviceNotificationsCommand extends
 		public PollDeviceNotificationsCommand createFromParcel(Parcel source) {
 			return new PollDeviceNotificationsCommand(
 					(DeviceData) source.readParcelable(CLASS_LOADER),
-					source.readString());
+					source.readString(),
+					(Integer) source.readValue(CLASS_LOADER));
 		}
 	};
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeParcelable(deviceData, flags);
+		super.writeToParcel(dest, flags);
+	}
 }

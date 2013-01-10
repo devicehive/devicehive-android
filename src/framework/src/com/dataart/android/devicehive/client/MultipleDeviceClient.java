@@ -55,9 +55,9 @@ public abstract class MultipleDeviceClient extends DeviceClient {
 
 		@Override
 		protected NotificationsRetrivalCommand getPollNotificationsCommand(
-				String lastNotificationPollTimestamp) {
+				String lastNotificationPollTimestamp, Integer waitTimeout) {
 			return new PollMultipleDeviceNotificationsCommand(getDeviceGuids(),
-					lastNotificationPollTimestamp);
+					lastNotificationPollTimestamp, waitTimeout);
 		}
 
 		@Override

@@ -90,6 +90,17 @@ import com.dataart.android.devicehive.Notification;
 	public String getLastNotificationPollTimestamp() {
 		return serviceConnection.getLastNotificationPollTimestamp();
 	}
+	
+	/**
+	 * Set notification poll waiting timeout in seconds (default: 30 seconds,
+	 * maximum: 60 seconds). Specify 0 to disable waiting.
+	 * 
+	 * @param timeout
+	 *            Notification poll waiting timeout in seconds.
+	 */
+	public void setNotificationPollWaitTimeout(Integer timeout) {
+		this.serviceConnection.setNotificationPollWaitTimeout(timeout);
+	}
 
 	/**
 	 * Check if this client is receiving notifications, i.e. performs
