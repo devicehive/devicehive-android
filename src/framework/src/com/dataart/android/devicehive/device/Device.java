@@ -123,6 +123,9 @@ public abstract class Device implements CommandRunner {
 	 * Unregister device. Also unregisters all attached equipment.
 	 */
 	public void unregisterDevice() {
+		if (isProcessingCommands()) {
+			stopProcessingCommands();
+		}
 		isRegistered = false;
 		serviceConnection.unregisterDevice();
 	}
@@ -395,7 +398,7 @@ public abstract class Device implements CommandRunner {
 				deviceData.getKey(), newDeviceData.getName(),
 				newDeviceData.getStatus(), newDeviceData.getNetwork(),
 				newDeviceData.getDeviceClass());
-		this.deviceData.setData((Serializable)newDeviceData.getData());
+		this.deviceData.setData((Serializable) newDeviceData.getData());
 		for (Equipment equipment : equipmentList) {
 			this.deviceData.addEquipment(equipment.getEquipmentData());
 		}

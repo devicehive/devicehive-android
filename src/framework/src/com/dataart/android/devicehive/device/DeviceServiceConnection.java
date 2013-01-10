@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.dataart.android.devicehive.ApiInfo;
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.commands.GetApiInfoCommand;
 import com.dataart.android.devicehive.device.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.device.commands.PollDeviceCommandsCommand;
 import com.dataart.android.devicehive.device.commands.RegisterDeviceCommand;
@@ -68,7 +70,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	/* package */void stopProcessingCommands() {
+		detachResultReceiver();
 		isProcessingCommands = false;
+		isPollRequestInProgress = false;
 	}
 
 	/* package */void setDevice(Device device) {
@@ -84,6 +88,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	/* package */void unregisterDevice() {
+		logD("Unregistering device");
 		unregisterEquipment();
 	}
 
@@ -144,8 +149,17 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private void startPollCommandsRequest() {
 		logD("Starting polling request");
 		isPollRequestInProgress = true;
-		startNetworkCommand(new PollDeviceCommandsCommand(
-				device.getDeviceData(), lastCommandPollTimestamp));
+		if (lastCommandPollTimestamp == null) {
+			// timestamp wasn't specified. Request and use server timestamp
+			// instead.
+			logD("Starting Get API info command");
+			startNetworkCommand(new GetApiInfoCommand());
+		} else {
+			logD("Starting polling request with lastCommandPollTimestamp = "
+					+ lastCommandPollTimestamp);
+			startNetworkCommand(new PollDeviceCommandsCommand(
+					device.getDeviceData(), lastCommandPollTimestamp));
+		}
 	}
 
 	private void updateCommandStatus(Command deviceCommand, CommandResult result) {
@@ -222,6 +236,15 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				final DeviceData deviceData = GetDeviceCommand
 						.getDevice(resultData);
 				device.onReloadDeviceDataFinishedInternal(deviceData);
+			} else if (tagId == TAG_GET_API_INFO) {
+				final ApiInfo apiInfo = GetApiInfoCommand
+						.getApiInfo(resultData);
+				logD("Get API info request finished: " + apiInfo);
+				lastCommandPollTimestamp = apiInfo.getServerTimestamp();
+				logD("Starting polling request with lastCommandPollTimestamp = "
+						+ lastCommandPollTimestamp);
+				startNetworkCommand(new PollDeviceCommandsCommand(
+						device.getDeviceData(), lastCommandPollTimestamp));
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
@@ -232,7 +255,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 			if (tagId == TAG_REGISTER) {
 				device.onFailRegistration();
 			}
-			if (tagId == TAG_POLL_COMMANDS) {
+			if (tagId == TAG_POLL_COMMANDS || tagId == TAG_GET_API_INFO) {
 				isPollRequestInProgress = false;
 				if (isProcessingCommands) {
 					executeNextCommand();
@@ -322,4 +345,5 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private final static int TAG_POLL_COMMANDS = getTagId(PollDeviceCommandsCommand.class);
 	private final static int TAG_UPDATE_COMMAND_STATUS = getTagId(UpdateCommandStatusCommand.class);
 	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
+	private static final int TAG_GET_API_INFO = getTagId(GetApiInfoCommand.class);
 }

@@ -87,6 +87,13 @@ public abstract class ServiceConnection {
 		}
 		return resultReceiver;
 	}
+	
+	protected void detachResultReceiver() {
+		if (resultReceiver != null) {
+			resultReceiver.detachResultListener();
+			resultReceiver = null;
+		}
+	}
 
 	protected static final int getTagId(final Class<?> tag) {
 		return getTagId(tag.getName());
