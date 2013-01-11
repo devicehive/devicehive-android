@@ -27,16 +27,16 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 	private static final String EQUIPMENT_STATE_KEY = NAMESPACE
 			.concat(".EQUIPMENT_STATE_KEY");
 
-	private final DeviceData deviceData;
+	private final String deviceId;
 
 	/**
-	 * Construct a new command with given {@link DeviceData} object.
+	 * Construct a new command with given device identifier.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device identifier.
 	 */
-	public GetDeviceEquipmentStateCommand(DeviceData deviceData) {
-		this.deviceData = deviceData;
+	public GetDeviceEquipmentStateCommand(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	@Override
@@ -46,8 +46,7 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 
 	@Override
 	protected String getRequestPath() {
-		return String.format("device/%s/equipment",
-				encodedString(deviceData.getId()));
+		return String.format("device/%s/equipment", encodedString(deviceId));
 	}
 
 	@Override
@@ -57,7 +56,7 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(deviceData, flags);
+		dest.writeString(deviceId);
 	}
 
 	public static Parcelable.Creator<GetDeviceEquipmentStateCommand> CREATOR = new Parcelable.Creator<GetDeviceEquipmentStateCommand>() {
@@ -69,8 +68,7 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 
 		@Override
 		public GetDeviceEquipmentStateCommand createFromParcel(Parcel source) {
-			return new GetDeviceEquipmentStateCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER));
+			return new GetDeviceEquipmentStateCommand(source.readString());
 		}
 	};
 
@@ -82,19 +80,19 @@ public class GetDeviceEquipmentStateCommand extends DeviceClientCommand {
 		}.getType();
 		final ArrayList<EquipmentState> equipmentStates = gson.fromJson(
 				response, listType);
-		resultData.putParcelable(DEVICE_KEY, deviceData);
+		resultData.putString(DEVICE_KEY, deviceId);
 		resultData.putParcelableArrayList(EQUIPMENT_STATE_KEY, equipmentStates);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
 	}
 
 	/**
-	 * Get target {@link DeviceData} object.
+	 * Get target device identifier.
 	 * 
 	 * @param resultData
 	 *            {@link Bundle} object containing required response data.
-	 * @return {@link DeviceData} instance.
+	 * @return Device identifier.
 	 */
-	public final static DeviceData getDeviceData(Bundle resultData) {
+	public final static String getDeviceId(Bundle resultData) {
 		return resultData.getParcelable(DEVICE_KEY);
 	}
 

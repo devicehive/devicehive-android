@@ -47,7 +47,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 		this.lastCommandPollTimestamp = timestamp;
 	}
 
-	/* package */ void setCommandPollWaitTimeout(Integer timeout) {
+	/* package */void setCommandPollWaitTimeout(Integer timeout) {
 		this.commandPollWaitTimeout = timeout;
 	}
 
@@ -62,8 +62,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	/* package */void sendNotification(Notification notification) {
 		logD("Sending notification: " + notification.getName());
 		device.onStartSendingNotification(notification);
-		startNetworkCommand(new SendNotificationCommand(device.getDeviceData(),
-				notification));
+		final DeviceData deviceData = device.getDeviceData();
+		startNetworkCommand(new SendNotificationCommand(deviceData.getId(),
+				deviceData.getKey(), notification));
 	}
 
 	/* package */void startProcessingCommands() {
@@ -98,7 +99,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	/* package */void reloadDeviceData() {
-		startNetworkCommand(new GetDeviceCommand(device.getDeviceData()));
+		final DeviceData deviceData = device.getDeviceData();
+		startNetworkCommand(new GetDeviceCommand(deviceData.getId(),
+				deviceData.getKey()));
 	}
 
 	private void runCommandOnRunner(final CommandRunner commandRunner,
@@ -162,8 +165,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private void startPollCommandsRequest() {
 		logD("Starting polling request with lastCommandPollTimestamp = "
 				+ lastCommandPollTimestamp);
-		startNetworkCommand(new PollDeviceCommandsCommand(
-				device.getDeviceData(), lastCommandPollTimestamp,
+		final DeviceData deviceData = device.getDeviceData();
+		startNetworkCommand(new PollDeviceCommandsCommand(deviceData.getId(),
+				deviceData.getKey(), lastCommandPollTimestamp,
 				commandPollWaitTimeout));
 	}
 
@@ -171,8 +175,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 		logD(String.format("Update command(%s) status(%s) and result(%s)",
 				deviceCommand.getCommand(), result.getStatus(),
 				result.getResult()));
-		startNetworkCommand(new UpdateCommandStatusCommand(
-				device.getDeviceData(), deviceCommand.getId(), result));
+		final DeviceData deviceData = device.getDeviceData();
+		startNetworkCommand(new UpdateCommandStatusCommand(deviceData.getId(),
+				deviceData.getKey(), deviceCommand.getId(), result));
 	}
 
 	private int enqueueCommands(List<Command> commands) {

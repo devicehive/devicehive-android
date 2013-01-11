@@ -160,7 +160,7 @@ public class DeviceActivity extends BaseActivity implements
 		} else if (actionBar.getSelectedTab().getTag() == equipmentListFragment) {
 			incrementActionBarProgressOperationsCount(1);
 			startCommand(new GetDeviceEquipmentStateCommand(
-					deviceClient.getDevice()));
+					deviceClient.getDevice().getId()));
 		}
 	}
 
@@ -172,7 +172,7 @@ public class DeviceActivity extends BaseActivity implements
 	private void startEquipmentRequest() {
 		incrementActionBarProgressOperationsCount(2);
 		startCommand(new GetDeviceClassEquipmentCommand(deviceClient
-				.getDevice().getDeviceClass()));
+				.getDevice().getDeviceClass().getId()));
 	}
 
 	@Override
@@ -194,7 +194,7 @@ public class DeviceActivity extends BaseActivity implements
 			} else if (tagId == TAG_GET_EQUIPMENT_STATE) {
 				// retry
 				startCommand(new GetDeviceEquipmentStateCommand(
-						deviceClient.getDevice()));
+						deviceClient.getDevice().getId()));
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_STATUS_FAILURE:
@@ -211,7 +211,7 @@ public class DeviceActivity extends BaseActivity implements
 						.getEquipment(resultData);
 				deviceSendCommandFragment.setEquipment(equipment);
 				startCommand(new GetDeviceEquipmentStateCommand(
-						deviceClient.getDevice()));
+						deviceClient.getDevice().getId()));
 			} else if (tagId == TAG_GET_EQUIPMENT_STATE) {
 				this.equipmentState = GetDeviceEquipmentStateCommand
 						.getEquipmentState(resultData);

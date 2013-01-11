@@ -4,7 +4,6 @@ import java.util.Map;
 
 import android.os.Parcel;
 
-import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.network.JsonNetworkCommand;
 
 /**
@@ -12,25 +11,30 @@ import com.dataart.android.devicehive.network.JsonNetworkCommand;
  */
 public abstract class DeviceCommand extends JsonNetworkCommand {
 
-	protected final DeviceData deviceData;
+	protected final String deviceId;
+	protected final String deviceKey;
 
 	/**
 	 * Construct new command with given device data.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} object.
+	 * @param deviceId
+	 *            Device identifier.
+	 * @param deviceKey
+	 * 			  Device key.
 	 */
-	public DeviceCommand(DeviceData deviceData) {
-		this.deviceData = deviceData;
+	public DeviceCommand(String deviceId, String deviceKey) {
+		this.deviceId = deviceId;
+		this.deviceKey = deviceKey;
 	}
-
+	
 	/**
-	 * Get {@link DeviceData} object describing target device.
+	 * Construct new command with given device data.
 	 * 
-	 * @return {@link DeviceData} object.
+	 * @param deviceId
+	 *            Device identifier.
 	 */
-	public DeviceData getDeviceData() {
-		return deviceData;
+	public DeviceCommand(String deviceId) {
+		this(deviceId, null);
 	}
 
 	protected boolean deviceAuthenticationRequired() {
@@ -47,12 +51,12 @@ public abstract class DeviceCommand extends JsonNetworkCommand {
 	}
 
 	protected String getEncodedDeviceId() {
-		return encodedString(deviceData.getId());
+		return encodedString(deviceId);
 	}
 
 	private void addDeviceAuthentication(Map<String, String> headers) {
-		headers.put("Auth-DeviceID", deviceData.getId());
-		headers.put("Auth-DeviceKey", deviceData.getKey());
+		headers.put("Auth-DeviceID", deviceId);
+		headers.put("Auth-DeviceKey", deviceKey);
 	}
 
 	@Override
@@ -62,7 +66,8 @@ public abstract class DeviceCommand extends JsonNetworkCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(deviceData, 0);
+		dest.writeString(deviceId);
+		dest.writeString(deviceKey);
 	}
 
 }

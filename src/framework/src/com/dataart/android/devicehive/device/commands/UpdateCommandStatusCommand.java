@@ -29,16 +29,18 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 	 * Construct a new update command with given {@link DeviceData} and
 	 * identifier of the command to update with {@link CommandResult}.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param command
 	 *            {@link Command} to be updated.
 	 * @param commandResult
 	 *            {@link CommandResult} object describing command status.
 	 */
-	public UpdateCommandStatusCommand(DeviceData deviceData, int commandId,
+	public UpdateCommandStatusCommand(String deviceId, String deviceKey, int commandId,
 			CommandResult commandResult) {
-		super(deviceData);
+		super(deviceId, deviceKey);
 		this.commandId = commandId;
 		this.commandResult = commandResult;
 	}
@@ -71,7 +73,8 @@ public class UpdateCommandStatusCommand extends DeviceCommand {
 		@Override
 		public UpdateCommandStatusCommand createFromParcel(Parcel source) {
 			return new UpdateCommandStatusCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
+					source.readString(),
+					source.readString(),
 					source.readInt(),
 					(CommandResult) source.readParcelable(CLASS_LOADER));
 		}

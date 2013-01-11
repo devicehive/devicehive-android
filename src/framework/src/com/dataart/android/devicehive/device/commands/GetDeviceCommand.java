@@ -23,9 +23,11 @@ public class GetDeviceCommand extends DeviceCommand {
 	 * 
 	 * @param deviceId
 	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 */
-	public GetDeviceCommand(DeviceData deviceData) {
-		super(deviceData);
+	public GetDeviceCommand(String deviceId, String deviceKey) {
+		super(deviceId, deviceKey);
 	}
 
 	@Override
@@ -40,8 +42,7 @@ public class GetDeviceCommand extends DeviceCommand {
 
 	@Override
 	protected String getRequestPath() {
-		String requestPath = String.format("/device/%s",
-				encodedString(deviceData.getId()));
+		String requestPath = String.format("/device/%s", getEncodedDeviceId());
 		return requestPath;
 	}
 
@@ -54,7 +55,8 @@ public class GetDeviceCommand extends DeviceCommand {
 
 		@Override
 		public GetDeviceCommand createFromParcel(Parcel source) {
-			return new GetDeviceCommand((DeviceData)source.readParcelable(CLASS_LOADER));
+			return new GetDeviceCommand(source.readString(),
+					source.readString());
 		}
 	};
 
@@ -65,15 +67,14 @@ public class GetDeviceCommand extends DeviceCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(deviceData, 0);
+		super.writeToParcel(dest, flags);
 	}
 
 	@Override
 	protected int fromJson(final String response, final Gson gson,
 			final Bundle resultData) {
 
-		final DeviceData device = gson.fromJson(response,
-				DeviceData.class);
+		final DeviceData device = gson.fromJson(response, DeviceData.class);
 		resultData.putParcelable(DEVICE_KEY, device);
 		return DeviceHiveResultReceiver.MSG_HANDLED_RESPONSE;
 	}

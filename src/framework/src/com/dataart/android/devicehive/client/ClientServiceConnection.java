@@ -64,7 +64,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	/* package */void sendCommand(DeviceData deviceData, Command command) {
 		logD("Sending command: " + command.getCommand());
 		client.onStartSendingCommand(command);
-		startNetworkCommand(new SendDeviceCommandCommand(deviceData, command));
+		startNetworkCommand(new SendDeviceCommandCommand(deviceData.getId(), command));
 	}
 
 	/* package */void reloadDeviceData(DeviceData deviceData) {

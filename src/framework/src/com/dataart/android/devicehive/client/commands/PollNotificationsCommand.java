@@ -2,7 +2,6 @@ package com.dataart.android.devicehive.client.commands;
 
 import android.os.Parcel;
 
-import com.dataart.android.devicehive.DeviceData;
 import com.google.gson.Gson;
 
 /**
@@ -17,8 +16,6 @@ public abstract class PollNotificationsCommand extends
 	/**
 	 * Construct a new command with last received notification timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
 	 * @param lastNotificationPollTimestamp
 	 *            Last received notification timestamp.
 	 */
@@ -30,8 +27,6 @@ public abstract class PollNotificationsCommand extends
 	 * Construct a new command with last received notification timestamp and
 	 * wait timeout.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
 	 * @param lastNotificationPollTimestamp
 	 *            Last received notification timestamp.
 	 * @param waitTimeout

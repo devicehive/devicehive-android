@@ -21,6 +21,8 @@ public class RegisterDeviceCommand extends DeviceCommand {
 	private static final String DEVICE_DATA_KEY = NAMESPACE
 			.concat(".DEVICE_DATA_KEY");
 
+	private final DeviceData deviceData;
+
 	/**
 	 * Construct a new command with given {@link DeviceData}.
 	 * 
@@ -28,7 +30,8 @@ public class RegisterDeviceCommand extends DeviceCommand {
 	 *            {@link DeviceData} instance.
 	 */
 	public RegisterDeviceCommand(DeviceData deviceData) {
-		super(deviceData);
+		super(deviceData.getId(), deviceData.getKey());
+		this.deviceData = deviceData;
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class RegisterDeviceCommand extends DeviceCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		super.writeToParcel(dest, flags);
+		dest.writeParcelable(deviceData, 0);
 	}
 
 	public static Parcelable.Creator<RegisterDeviceCommand> CREATOR = new Parcelable.Creator<RegisterDeviceCommand>() {

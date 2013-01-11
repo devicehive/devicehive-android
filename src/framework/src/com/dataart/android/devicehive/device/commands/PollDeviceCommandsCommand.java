@@ -18,32 +18,36 @@ public class PollDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 	 * Construct a new command with given {@link DeviceData} and last received
 	 * command timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param lastCommandPollTimestamp
 	 *            Timestamp of the last received command. If null value is
 	 *            passed then server's timestamp will be used instead.
 	 */
-	public PollDeviceCommandsCommand(DeviceData deviceData,
+	public PollDeviceCommandsCommand(String deviceId, String deviceKey,
 			String lastCommandPollTimestamp) {
-		this(deviceData, lastCommandPollTimestamp, null);
+		this(deviceId, deviceKey, lastCommandPollTimestamp, null);
 	}
 
 	/**
 	 * Construct a new command with given {@link DeviceData} and last received
 	 * command timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param lastCommandPollTimestamp
 	 *            Timestamp of the last received command. If null value is
 	 *            passed then server's timestamp will be used instead.
 	 * @param waitTimeout
 	 *            Waiting timeout in seconds.
 	 */
-	public PollDeviceCommandsCommand(DeviceData deviceData,
+	public PollDeviceCommandsCommand(String deviceId, String deviceKey,
 			String lastCommandPollTimestamp, Integer waitTimeout) {
-		super(deviceData, lastCommandPollTimestamp);
+		super(deviceId, deviceKey, lastCommandPollTimestamp);
 		this.waitTimeout = waitTimeout;
 	}
 
@@ -77,9 +81,8 @@ public class PollDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 
 		@Override
 		public PollDeviceCommandsCommand createFromParcel(Parcel source) {
-			return new PollDeviceCommandsCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
-					source.readString(),
+			return new PollDeviceCommandsCommand(source.readString(),
+					source.readString(), source.readString(),
 					(Integer) source.readValue(CLASS_LOADER));
 		}
 	};
