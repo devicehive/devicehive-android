@@ -43,7 +43,6 @@ public abstract class JsonNetworkCommand extends NetworkCommand {
 	static {
 		GsonBuilder builder = new GsonBuilder();
 		builder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY);
-		builder.setPrettyPrinting();
 		builder.registerTypeAdapter(ObjectWrapper.class,
 				new ObjectWrapperAdapter());
 		gson = builder.create();
