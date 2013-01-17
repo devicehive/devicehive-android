@@ -8,15 +8,17 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.dataart.android.devicehive.ApiInfo;
 import com.dataart.android.devicehive.Command;
 import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.DeviceHive;
 import com.dataart.android.devicehive.Notification;
+import com.dataart.android.devicehive.client.commands.GetDeviceCommand;
 import com.dataart.android.devicehive.client.commands.NotificationsRetrivalCommand;
 import com.dataart.android.devicehive.client.commands.PollDeviceNotificationsCommand;
 import com.dataart.android.devicehive.client.commands.PollMultipleDeviceNotificationsCommand;
 import com.dataart.android.devicehive.client.commands.SendDeviceCommandCommand;
-import com.dataart.android.devicehive.client.commands.GetDeviceCommand;
+import com.dataart.android.devicehive.commands.GetApiInfoCommand;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.dataart.android.devicehive.network.NetworkCommand;
 import com.dataart.android.devicehive.network.NetworkCommandConfig;
@@ -36,6 +38,7 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private boolean isPollRequestInProgress = false;
 
 	private String lastNotificationPollTimestamp;
+	private Integer notificationPollWaitTimeout;
 
 	public ClientServiceConnection(Context context) {
 		super(context);
@@ -54,10 +57,14 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 		return lastNotificationPollTimestamp;
 	}
 
+	/* package */void setNotificationPollWaitTimeout(Integer timeout) {
+		this.notificationPollWaitTimeout = timeout;
+	}
+
 	/* package */void sendCommand(DeviceData deviceData, Command command) {
 		logD("Sending command: " + command.getCommand());
 		client.onStartSendingCommand(command);
-		startNetworkCommand(new SendDeviceCommandCommand(deviceData, command));
+		startNetworkCommand(new SendDeviceCommandCommand(deviceData.getId(), command));
 	}
 
 	/* package */void reloadDeviceData(DeviceData deviceData) {
@@ -73,8 +80,9 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	}
 
 	/* package */void stopReceivingNotifications() {
+		detachResultReceiver();
 		isReceivingNotifications = false;
-		// mainThreadHandler.removeCallbacks(notificationPollRequestRunnable);
+		isPollRequestInProgress = false;
 	}
 
 	/* package */void setClient(DeviceClient client) {
@@ -115,20 +123,29 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 			handleNotification(notification);
 		} else {
 			if (!isPollRequestInProgress) {
-				startPollNotificationsRequest();
+				isPollRequestInProgress = true;
+				if (lastNotificationPollTimestamp == null) {
+					// timestamp wasn't specified. Request and use server
+					// timestamp instead.
+					logD("Starting Get API info command");
+					startNetworkCommand(new GetApiInfoCommand());
+				} else {
+					startPollNotificationsRequest();
+				}
 			}
 		}
 	}
 
 	protected abstract NotificationsRetrivalCommand getPollNotificationsCommand(
-			String lastNotificationPollTimestamp);
+			String lastNotificationPollTimestamp, Integer waitTimeout);
 
 	protected abstract void didReceiveNotification(Notification notification);
 
 	private void startPollNotificationsRequest() {
-		logD("Starting polling request");
-		isPollRequestInProgress = true;
-		startNetworkCommand(getPollNotificationsCommand(lastNotificationPollTimestamp));
+		logD("Starting polling request with lastNotificationPollTimestamp = "
+				+ lastNotificationPollTimestamp);
+		startNetworkCommand(getPollNotificationsCommand(
+				lastNotificationPollTimestamp, notificationPollWaitTimeout));
 	}
 
 	private int enqueueNotifications(List<Notification> notifications) {
@@ -180,6 +197,14 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 				final DeviceData deviceData = GetDeviceCommand
 						.getDevice(resultData);
 				client.onReloadDeviceDataFinishedInternal(deviceData);
+			} else if (tagId == TAG_GET_API_INFO) {
+				final ApiInfo apiInfo = GetApiInfoCommand
+						.getApiInfo(resultData);
+				logD("Get API info request finished: " + apiInfo);
+				lastNotificationPollTimestamp = apiInfo.getServerTimestamp();
+				logD("Starting polling request with lastNotificationPollTimestamp = "
+						+ lastNotificationPollTimestamp);
+				startPollNotificationsRequest();
 			}
 			break;
 		case DeviceHiveResultReceiver.MSG_EXCEPTION:
@@ -192,7 +217,8 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 						.getCommand(resultData);
 				client.onFailSendingCommand(command.getCommand());
 			} else if (tagId == TAG_POLL_NOTIFICATIONS
-					|| tagId == TAG_POLL_MULTIPLE_NOTIFICATIONS) {
+					|| tagId == TAG_POLL_MULTIPLE_NOTIFICATIONS
+					|| tagId == TAG_GET_API_INFO) {
 				Log.d(DeviceHive.TAG, "Failed to poll notifications");
 				isPollRequestInProgress = false;
 				if (isReceivingNotifications) {
@@ -217,4 +243,5 @@ import com.dataart.android.devicehive.network.ServiceConnection;
 	private final static int TAG_POLL_NOTIFICATIONS = getTagId(PollDeviceNotificationsCommand.class);
 	private final static int TAG_POLL_MULTIPLE_NOTIFICATIONS = getTagId(PollMultipleDeviceNotificationsCommand.class);
 	private final static int TAG_GET_DEVICE = getTagId(GetDeviceCommand.class);
+	private static final int TAG_GET_API_INFO = getTagId(GetApiInfoCommand.class);
 }

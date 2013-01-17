@@ -3,7 +3,6 @@ package com.dataart.android.devicehive.client.commands;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Notification;
 
 /**
@@ -12,32 +11,40 @@ import com.dataart.android.devicehive.Notification;
  * notifications since given timestamp or not. As a result returns list of
  * {@link Notification}.
  */
-public class GetDeviceNotificationsCommand extends
-		DeviceNotificationsRetrivalCommand {
+public class GetDeviceNotificationsCommand extends NotificationsRetrivalCommand {
+
+	private final String deviceId;
 
 	/**
 	 * Construct a new command.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device identifier.
 	 * @param lastNotificationPollTimestamp
 	 *            Timestamp which defines starting point in the past for
 	 *            notifications.
 	 */
-	public GetDeviceNotificationsCommand(DeviceData deviceData,
+	public GetDeviceNotificationsCommand(String deviceId,
 			String lastNotificationPollTimestamp) {
-		super(deviceData, lastNotificationPollTimestamp);
+		super(lastNotificationPollTimestamp);
+		this.deviceId = deviceId;
 	}
 
 	@Override
 	protected String getRequestPath() {
 		String requestPath = String.format("device/%s/notification",
-				encodedString(deviceData.getId()));
+				encodedString(deviceId));
 		if (lastNotificationPollTimestamp != null) {
 			requestPath += "?start="
 					+ encodedString(lastNotificationPollTimestamp);
 		}
 		return requestPath;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(deviceId);
+		super.writeToParcel(dest, flags);
 	}
 
 	public static Parcelable.Creator<GetDeviceNotificationsCommand> CREATOR = new Parcelable.Creator<GetDeviceNotificationsCommand>() {
@@ -49,8 +56,7 @@ public class GetDeviceNotificationsCommand extends
 
 		@Override
 		public GetDeviceNotificationsCommand createFromParcel(Parcel source) {
-			return new GetDeviceNotificationsCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
+			return new GetDeviceNotificationsCommand(source.readString(),
 					source.readString());
 		}
 	};

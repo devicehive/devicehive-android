@@ -25,16 +25,16 @@ public class GetNetworkDevicesCommand extends DeviceClientCommand {
 	private static final String NETWORK_KEY = NAMESPACE.concat(".NETWORK_KEY");
 	private static final String DEVICES_KEY = NAMESPACE.concat(".DEVICES_KEY");
 
-	private final Network network;
+	private final int networkId;
 
 	/**
-	 * Construct a new command with given {@link Network} object.
+	 * Construct a new command with given {@link Network} identifier.
 	 * 
-	 * @param network
-	 *            {@link Network} instance.
+	 * @param networkId
+	 *            {@link Network} identifier.
 	 */
-	public GetNetworkDevicesCommand(Network network) {
-		this.network = network;
+	public GetNetworkDevicesCommand(int networkId) {
+		this.networkId = networkId;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class GetNetworkDevicesCommand extends DeviceClientCommand {
 
 	@Override
 	protected String getRequestPath() {
-		return String.format("network/%d", network.getId());
+		return String.format("network/%d", networkId);
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class GetNetworkDevicesCommand extends DeviceClientCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(network, flags);
+		dest.writeInt(networkId);
 	}
 
 	public static Parcelable.Creator<GetNetworkDevicesCommand> CREATOR = new Parcelable.Creator<GetNetworkDevicesCommand>() {
@@ -66,8 +66,7 @@ public class GetNetworkDevicesCommand extends DeviceClientCommand {
 
 		@Override
 		public GetNetworkDevicesCommand createFromParcel(Parcel source) {
-			return new GetNetworkDevicesCommand(
-					(Network) source.readParcelable(CLASS_LOADER));
+			return new GetNetworkDevicesCommand(source.readInt());
 		}
 	};
 

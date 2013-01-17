@@ -28,14 +28,16 @@ public class SendNotificationCommand extends DeviceCommand {
 	 * Construct a new command with given {@link DeviceData} and last received
 	 * command timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param notification
 	 *            {@link Notification} to be sent on behalf of given device.
 	 */
-	public SendNotificationCommand(DeviceData deviceData,
+	public SendNotificationCommand(String deviceId, String deviceKey,
 			Notification notification) {
-		super(deviceData);
+		super(deviceId, deviceKey);
 		this.notification = notification;
 	}
 
@@ -73,7 +75,8 @@ public class SendNotificationCommand extends DeviceCommand {
 		@Override
 		public SendNotificationCommand createFromParcel(Parcel source) {
 			return new SendNotificationCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
+					source.readString(),
+					source.readString(),
 					(Notification) source.readParcelable(CLASS_LOADER));
 		}
 	};

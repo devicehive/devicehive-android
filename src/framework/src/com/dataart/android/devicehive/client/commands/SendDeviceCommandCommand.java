@@ -5,7 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.dataart.android.devicehive.Command;
-import com.dataart.android.devicehive.DeviceData;
+import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
 
@@ -21,15 +21,30 @@ public class SendDeviceCommandCommand extends DeviceClientCommand {
 
 	private static final String COMMAND_KEY = NAMESPACE.concat(".COMMAND_KEY");
 
-	private final DeviceData deviceData;
+	private final String deviceId;
 	private final Command command;
 
-	public SendDeviceCommandCommand(DeviceData deviceData, Command command) {
-		super();
-		this.deviceData = deviceData;
+	/**
+	 * Construct a new command with given device identifier and {@link Command}
+	 * instance.
+	 * 
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param command
+	 *            {@link Command} instance.
+	 * @param notification
+	 *            {@link Notification} to be sent on behalf of given device.
+	 */
+	public SendDeviceCommandCommand(String deviceId, Command command) {
+		this.deviceId = deviceId;
 		this.command = command;
 	}
 
+	/**
+	 * Get {@link Command} to be sent.
+	 * 
+	 * @return {@link Command} instance.
+	 */
 	public Command getCommand() {
 		return command;
 	}
@@ -41,14 +56,13 @@ public class SendDeviceCommandCommand extends DeviceClientCommand {
 
 	@Override
 	protected String getRequestPath() {
-		return String.format("device/%s/command",
-				encodedString(deviceData.getId()));
+		return String.format("device/%s/command", encodedString(deviceId));
 	}
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		super.writeToParcel(dest, flags);
-		dest.writeParcelable(deviceData, 0);
+		dest.writeString(deviceId);
 		dest.writeParcelable(command, 0);
 	}
 
@@ -61,8 +75,7 @@ public class SendDeviceCommandCommand extends DeviceClientCommand {
 
 		@Override
 		public SendDeviceCommandCommand createFromParcel(Parcel source) {
-			return new SendDeviceCommandCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
+			return new SendDeviceCommandCommand(source.readString(),
 					(Command) source.readParcelable(CLASS_LOADER));
 		}
 	};

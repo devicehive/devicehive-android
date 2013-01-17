@@ -51,9 +51,9 @@ public abstract class SingleDeviceClient extends DeviceClient {
 
 		@Override
 		protected NotificationsRetrivalCommand getPollNotificationsCommand(
-				String lastNotificationPollTimestamp) {
-			return new PollDeviceNotificationsCommand(device,
-					lastNotificationPollTimestamp);
+				String lastNotificationPollTimestamp, Integer waitTimeout) {
+			return new PollDeviceNotificationsCommand(device.getId(),
+					lastNotificationPollTimestamp, waitTimeout);
 		}
 
 		@Override

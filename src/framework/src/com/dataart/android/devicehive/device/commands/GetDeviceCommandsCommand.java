@@ -16,16 +16,18 @@ public class GetDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 	 * Construct a new command with given {@link DeviceData} and last received
 	 * command timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param lastCommandPollTimestamp
 	 *            Timestamp of the last received command. If null value is
 	 *            passed then server will return all command it's received so
 	 *            far.
 	 */
-	public GetDeviceCommandsCommand(DeviceData deviceData,
+	public GetDeviceCommandsCommand(String deviceId, String deviceKey,
 			String lastCommandPollTimestamp) {
-		super(deviceData, lastCommandPollTimestamp);
+		super(deviceId, deviceKey, lastCommandPollTimestamp);
 	}
 
 	@Override
@@ -47,9 +49,8 @@ public class GetDeviceCommandsCommand extends DeviceCommandsRetrivalCommand {
 
 		@Override
 		public GetDeviceCommandsCommand createFromParcel(Parcel source) {
-			return new GetDeviceCommandsCommand(
-					(DeviceData) source.readParcelable(CLASS_LOADER),
-					source.readString());
+			return new GetDeviceCommandsCommand(source.readString(),
+					source.readString(), source.readString());
 		}
 	};
 

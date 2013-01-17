@@ -103,7 +103,7 @@ public class NetworkDevicesActivity extends BaseActivity {
 	
 	private void startNetworkDevicesRequest() {
 		incrementActionBarProgressOperationsCount(1);
-		startCommand(new GetNetworkDevicesCommand(network));
+		startCommand(new GetNetworkDevicesCommand(network.getId()));
 	}
 
 	private static class NetworkDevicesAdapter extends BaseAdapter {

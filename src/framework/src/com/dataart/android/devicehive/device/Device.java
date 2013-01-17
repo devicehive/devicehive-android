@@ -103,6 +103,17 @@ public abstract class Device implements CommandRunner {
 	}
 
 	/**
+	 * Set command poll waiting timeout in seconds (default: 30 seconds,
+	 * maximum: 60 seconds). Specify 0 to disable waiting.
+	 * 
+	 * @param timeout
+	 *            Command poll waiting timeout in seconds.
+	 */
+	public void setCommandPollWaitTimeout(Integer timeout) {
+		this.serviceConnection.setCommandPollWaitTimeout(timeout);
+	}
+
+	/**
 	 * Initiate device registration. You should set Device Hive service URL
 	 * before performing device registration.
 	 * 
@@ -123,6 +134,9 @@ public abstract class Device implements CommandRunner {
 	 * Unregister device. Also unregisters all attached equipment.
 	 */
 	public void unregisterDevice() {
+		if (isProcessingCommands()) {
+			stopProcessingCommands();
+		}
 		isRegistered = false;
 		serviceConnection.unregisterDevice();
 	}
@@ -395,7 +409,7 @@ public abstract class Device implements CommandRunner {
 				deviceData.getKey(), newDeviceData.getName(),
 				newDeviceData.getStatus(), newDeviceData.getNetwork(),
 				newDeviceData.getDeviceClass());
-		this.deviceData.setData((Serializable)newDeviceData.getData());
+		this.deviceData.setData((Serializable) newDeviceData.getData());
 		for (Equipment equipment : equipmentList) {
 			this.deviceData.addEquipment(equipment.getEquipmentData());
 		}

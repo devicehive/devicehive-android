@@ -30,14 +30,16 @@ public abstract class DeviceCommandsRetrivalCommand extends DeviceCommand {
 	 * Construct a new command with given {@link DeviceData} and last received
 	 * command timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceId
+	 *            Device unique identifier.
+	 * @param deviceKey
+	 *            Device key.
 	 * @param lastCommandPollTimestamp
 	 *            Timestamp of the last received command.
 	 */
-	public DeviceCommandsRetrivalCommand(DeviceData deviceData,
+	public DeviceCommandsRetrivalCommand(String deviceId, String deviceKey,
 			String lastCommandPollTimestamp) {
-		super(deviceData);
+		super(deviceId, deviceKey);
 		this.lastCommandPollTimestamp = lastCommandPollTimestamp;
 	}
 

@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.dataart.android.devicehive.DeviceData;
 import com.dataart.android.devicehive.Notification;
 import com.dataart.android.devicehive.network.DeviceHiveResultReceiver;
 import com.google.gson.Gson;
@@ -24,7 +23,7 @@ import com.google.gson.reflect.TypeToken;
  * (currently 30 seconds). As a result returns list of {@link Notification}.
  */
 public class PollMultipleDeviceNotificationsCommand extends
-		NotificationsRetrivalCommand {
+		PollNotificationsCommand {
 
 	protected final List<String> deviceIds;
 
@@ -32,14 +31,30 @@ public class PollMultipleDeviceNotificationsCommand extends
 	 * Construct command for given device and last received notification
 	 * timestamp.
 	 * 
-	 * @param deviceData
-	 *            {@link DeviceData} instance.
+	 * @param deviceIds
+	 *            List of device identifiers.
 	 * @param lastNotificationPollTimestamp
 	 *            Last received notification timestamp.
 	 */
 	public PollMultipleDeviceNotificationsCommand(List<String> deviceIds,
 			String lastNotificationPollTimestamp) {
-		super(lastNotificationPollTimestamp);
+		this(deviceIds, lastNotificationPollTimestamp, null);
+	}
+	
+	/**
+	 * Construct a new command.
+	 * 
+	 * @param deviceIds
+	 *            List of device identifiers.
+	 * @param lastNotificationPollTimestamp
+	 *            Timestamp which defines starting point in the past for
+	 *            notifications.
+	 * @param waitTimeout
+	 *            Waiting timeout in seconds.
+	 */
+	public PollMultipleDeviceNotificationsCommand(List<String> deviceIds,
+			String lastNotificationPollTimestamp, Integer waitTimeout) {
+		super(lastNotificationPollTimestamp, waitTimeout);
 		this.deviceIds = deviceIds;
 	}
 
@@ -62,7 +77,8 @@ public class PollMultipleDeviceNotificationsCommand extends
 			List<String> deviceIds = new LinkedList<String>();
 			source.readStringList(deviceIds);
 			return new PollMultipleDeviceNotificationsCommand(deviceIds,
-					source.readString());
+					source.readString(),
+					(Integer) source.readValue(CLASS_LOADER));
 		}
 	};
 
@@ -77,6 +93,11 @@ public class PollMultipleDeviceNotificationsCommand extends
 			requestPath += isDeviceGuidsPresent() ? "&" : "?";
 			requestPath += "timestamp="
 					+ encodedString(lastNotificationPollTimestamp);
+		}
+		if (waitTimeout != null) {
+			requestPath += (isDeviceGuidsPresent() || lastNotificationPollTimestamp != null) ? "&"
+					: "?";
+			requestPath += "waitTimeout=" + waitTimeout;
 		}
 		return requestPath;
 	}

@@ -26,16 +26,16 @@ public class GetDeviceClassEquipmentCommand extends DeviceClientCommand {
 	private static final String EQUIPMENT_KEY = NAMESPACE
 			.concat(".EQUIPMENT_KEY");
 
-	private final DeviceClass deviceClass;
+	private final int deviceClassId;
 
 	/**
 	 * Construct a new command with given {@link DeviceClass}.
 	 * 
-	 * @param deviceClass
-	 *            {@link DeviceClass} instance.
+	 * @param deviceClassId
+	 *            {@link DeviceClass} identifier.
 	 */
-	public GetDeviceClassEquipmentCommand(DeviceClass deviceClass) {
-		this.deviceClass = deviceClass;
+	public GetDeviceClassEquipmentCommand(int deviceClassId) {
+		this.deviceClassId = deviceClassId;
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class GetDeviceClassEquipmentCommand extends DeviceClientCommand {
 
 	@Override
 	protected String getRequestPath() {
-		return String.format("device/class/%d", deviceClass.getId());
+		return String.format("device/class/%d", deviceClassId);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class GetDeviceClassEquipmentCommand extends DeviceClientCommand {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeParcelable(deviceClass, flags);
+		dest.writeInt(deviceClassId);
 	}
 
 	public static Parcelable.Creator<GetDeviceClassEquipmentCommand> CREATOR = new Parcelable.Creator<GetDeviceClassEquipmentCommand>() {
@@ -79,7 +79,7 @@ public class GetDeviceClassEquipmentCommand extends DeviceClientCommand {
 		@Override
 		public GetDeviceClassEquipmentCommand createFromParcel(Parcel source) {
 			return new GetDeviceClassEquipmentCommand(
-					(DeviceClass) source.readParcelable(CLASS_LOADER));
+					source.readInt());
 		}
 	};
 
