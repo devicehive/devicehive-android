@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">DevicehiveAndroid</string>
+    <string name="server_address_hint">Server address</string>
+    <string name="refresh_token_hint">Refresh token</string>
+    <string name="login">Login</string>
+
+    <string name="permission_dialog_title">No permissions granted</string>
+    <string name="dialog_title">No internet connection</string>
+    <string name="dialog_message">Try:\n\t\u2022 Turning off airplane mode\n\t\u2022 Turning on mobile data or Wi-Fi\n\t\u2022 Checking the signal in your area</string>
+    <string name="permission_dialog_message">This action needs permissions</string>
+    <string name="location_disabled_message">Please enable location settings to send real location</string>
+    <string name="location_permission_not_granted_message">Please grant location permissions to send real location</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="start">Start Service</string>
+    <string name="stop">Stop Service</string>
+
+    <string name="debugRefreshToken">eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7InUiOjEsImEiOlswXSwibiI6WyIqIl0sImQiOlsiKiJdLCJlIjoxNTI1NzgyMjcxODEzLCJ0IjowfX0.iDw0bWqMAj1zu27VebzG675h34XOT4Cp3StbIVls-iY</string>
+    <string name="debugServerUrl">http://playground.dev.devicehive.com</string>
+    <string name="service_is_working">Location Service is wroking</string>
 </resources>
