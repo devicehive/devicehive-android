@@ -26,15 +26,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
-            android:name=".service.LocationService"
+            android:name=".service.LocationScheduledTask"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-
+        <service
+            android:name=".service.LocationIntentService"
+            android:exported="false" />
     </application>
 
 </manifest>
