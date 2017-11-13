@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.devicehive.devicehiveandroid.R;
-import com.devicehive.devicehiveandroid.service.LocationIntentService;
 import com.devicehive.devicehiveandroid.service.LocationScheduledTask;
 import com.devicehive.devicehiveandroid.service.MessageEvent;
 import com.devicehive.devicehiveandroid.utils.PreferencesHelper;
@@ -104,17 +103,9 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.stop)
     void stop() {
-        clearAll();
-        mGcmNetworkManager.cancelTask(LocationScheduledTask.TAG, LocationScheduledTask.class);
-    }
-
-    private void clearAll() {
-        PreferencesHelper.getInstance().clearPreferences();
-        refreshToken.setText("");
-        serverAddress.setText("");
-        activeStatusMessage.setVisibility(View.GONE);
-        deviceIdTextView.setVisibility(View.GONE);
         enableButtons(false);
+        updateTextViewStates();
+        mGcmNetworkManager.cancelTask(LocationScheduledTask.TAG, LocationScheduledTask.class);
     }
 
     void enableButtons(boolean isServiceWorking) {
@@ -149,12 +140,12 @@ public class MainActivity extends AppCompatActivity {
             createNoPermissionsDialog().show();
             return;
         }
-        LocationIntentService.startService(this);
         mGcmNetworkManager.schedule(
                 LocationScheduledTask.getPeriodicTask(
                         serverAddress.getText().toString()
                         , refreshToken.getText().toString()));
         enableButtons(true);
+        updateTextViewStates();
     }
 
     @Override

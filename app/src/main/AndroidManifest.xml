@@ -26,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".service.LocationScheduledTask"
             android:exported="true"
@@ -35,9 +34,6 @@
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-        <service
-            android:name=".service.LocationIntentService"
-            android:exported="false" />
     </application>
 
 </manifest>

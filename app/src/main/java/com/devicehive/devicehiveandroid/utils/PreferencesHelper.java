@@ -2,6 +2,9 @@ package com.devicehive.devicehiveandroid.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import java.util.UUID;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -14,6 +17,8 @@ public class PreferencesHelper {
     private static final String REFRESH_TOKEN = "refreshToken";
     private static final String DEVICE_ID = "deviceId";
     private static final String IS_WORKING = "isWorking";
+
+    private static final String DEVICE_ID_FORMAT = "ANDROID-EXAMPLE-%s";
 
     private PreferencesHelper() {
     }
@@ -56,7 +61,12 @@ public class PreferencesHelper {
     }
 
     public String getDeviceId() {
-        return sharedPreferences.getString(DEVICE_ID, "");
+        String deviceId = sharedPreferences.getString(DEVICE_ID, "");
+        if (TextUtils.isEmpty(deviceId)) {
+            deviceId = String.format(DEVICE_ID_FORMAT, UUID.randomUUID().toString()).substring(0, 48);
+            putDeviceId(deviceId);
+        }
+        return deviceId;
 
     }
 
@@ -65,7 +75,7 @@ public class PreferencesHelper {
     }
 
     public boolean isServiceWorking() {
-       return sharedPreferences.getBoolean(IS_WORKING, false);
+        return sharedPreferences.getBoolean(IS_WORKING, false);
     }
 
 }
