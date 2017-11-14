@@ -37,10 +37,11 @@ public class LocationScheduledTask extends GcmTaskService {
     private DeviceHive deviceHive;
     private PreferencesHelper helper;
 
-    public static PeriodicTask getPeriodicTask(String serverUrl, String refreshToken) {
+    public static PeriodicTask getPeriodicTask(String serverUrl, String refreshToken,String deviceId) {
         PreferencesHelper helper = PreferencesHelper.getInstance();
         helper.putRefreshToken(refreshToken.trim());
         helper.putServerUrl(serverUrl.trim());
+        helper.putDeviceId(deviceId);
 
         return new PeriodicTask.Builder()
                 .setService(LocationScheduledTask.class)
@@ -77,7 +78,7 @@ public class LocationScheduledTask extends GcmTaskService {
         }
 
         helper.putIsServiceWorking(true);
-        EventBus.getDefault().post(new MessageEvent());
+        EventBus.getDefault().post(new GCMEvent());
         ReactiveLocationProvider locationProvider = new ReactiveLocationProvider(getApplicationContext());
         locationProvider.getLastKnownLocation()
                 .subscribe(location ->
@@ -91,7 +92,7 @@ public class LocationScheduledTask extends GcmTaskService {
 
     private void onError(Throwable throwable) {
         helper.putIsServiceWorking(false);
-        EventBus.getDefault().post(new MessageEvent());
+        EventBus.getDefault().post(new GCMEvent());
         if (throwable != null) {
             throwable.printStackTrace();
         }
