@@ -1,20 +1,12 @@
 package com.devicehive.devicehiveandroid;
 
-import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+import android.app.Application;
 
 import com.devicehive.devicehiveandroid.utils.PreferencesHelper;
 
 import timber.log.Timber;
 
-public class App extends MultiDexApplication {
-
-    @Override
-    protected void attachBaseContext(Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
+public class App extends Application {
 
     @Override
     public void onCreate() {
