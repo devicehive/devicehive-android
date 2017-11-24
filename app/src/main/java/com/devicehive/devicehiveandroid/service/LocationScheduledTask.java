@@ -6,6 +6,7 @@ import android.location.Location;
 
 import com.devicehive.devicehiveandroid.service.model.LocationParam;
 import com.devicehive.devicehiveandroid.utils.PreferencesHelper;
+import com.github.devicehive.client.model.DHResponse;
 import com.github.devicehive.client.model.Parameter;
 import com.github.devicehive.client.model.TokenAuth;
 import com.github.devicehive.client.service.Device;
@@ -37,7 +38,7 @@ public class LocationScheduledTask extends GcmTaskService {
     private DeviceHive deviceHive;
     private PreferencesHelper helper;
 
-    public static PeriodicTask getPeriodicTask(String serverUrl, String refreshToken,String deviceId) {
+    public static PeriodicTask getPeriodicTask(String serverUrl, String refreshToken, String deviceId) {
         PreferencesHelper helper = PreferencesHelper.getInstance();
         helper.putRefreshToken(refreshToken.trim());
         helper.putServerUrl(serverUrl.trim());
@@ -71,11 +72,13 @@ public class LocationScheduledTask extends GcmTaskService {
 
         deviceHive.enableDebug(true);
 
-        Device device = deviceHive.getDevice(deviceId);
-        if (device == null) {
+        DHResponse<Device> dhResponse = deviceHive.getDevice(deviceId);
+        if (!dhResponse.isSuccessful()) {
             onError(null);
-            return GcmNetworkManager.RESULT_FAILURE ;
+            return GcmNetworkManager.RESULT_FAILURE;
         }
+
+        Device device = dhResponse.getData();
 
         helper.putIsServiceWorking(true);
         EventBus.getDefault().post(new GCMEvent());
@@ -86,7 +89,7 @@ public class LocationScheduledTask extends GcmTaskService {
                             Parameter locationParams = createLocationParams(l);
                             device.sendNotification(NOTIFICATION_NAME, Collections.singletonList(locationParams));
 
-                        }, this::onError ), this::onError);
+                        }, this::onError), this::onError);
         return GcmNetworkManager.RESULT_SUCCESS;
     }
 

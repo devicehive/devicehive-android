@@ -17,8 +17,6 @@
     <string name="start">Start Service</string>
     <string name="stop">Stop Service</string>
 
-    <string name="debugRefreshToken">eyJhbGciOiJIUzI1NiJ9.eyJwYXlsb2FkIjp7InUiOjEsImEiOlswXSwibiI6WyIqIl0sImQiOlsiKiJdLCJlIjoxNTI1NzgyMjcxODEzLCJ0IjowfX0.iDw0bWqMAj1zu27VebzG675h34XOT4Cp3StbIVls-iY</string>
-    <string name="debugServerUrl">http://playground.dev.devicehive.com</string>
     <string name="service_is_working">Location Service is working</string>
     <string name="service_is_scheduled">Location Service is scheduled</string>
     <string name="text_error">Input field cannot be empty</string>
