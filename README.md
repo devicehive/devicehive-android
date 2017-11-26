@@ -4,17 +4,24 @@ DeviceHive Android Example
 [DeviceHive]: http://devicehive.com "DeviceHive framework"
 [DataArt]: http://dataart.com "DataArt"
 
-DeviceHive turns any connected device into the part of Internet of Things.
-It provides the communication layer, control software and multi-platform
-libraries to bootstrap development of smart energy, home automation, remote
-sensing, telemetry, remote control and monitoring software and much more.
+DeviceHive Android Example demostrates the usage of [DeviceHive Java Library](https://github.com/devicehive/devicehive-java) inside Android Application. [DeviceHive Java Library](https://github.com/devicehive/devicehive-java) could be easily [implemented](https://github.com/devicehive/devicehive-java#download) into any Android Project. It supports Android Applications for tablets and phones, Android Wear and Android Things. 
 
-Connect embedded Linux using Python or C++ libraries and JSON protocol or
-connect AVR, Microchip devices using lightweight C libraries and BINARY protocol.
-Develop client applications using HTML5/JavaScript, iOS and Android libraries.
-For solutions involving gateways, there is also gateway middleware that allows
-to interface with devices connected to it. Leave communications to DeviceHive
-and focus on actual product and innovation.
+This Android Application is showing how easily you can register the new Device and start sending any data to the server. For an example we are sending current Location.
+
+```java
+//Creating DeviceHive Instance
+  DeviceHive deviceHive = DeviceHive.getInstance().init(String serverUrl,
+                    new TokenAuth(String refreshToken));
+//Registering new Device or getting the existing
+  DHResponse<Device> dhResponse = deviceHive.getDevice(String deviceId);
+        if (dhResponse.isSuccessful()) {
+            Device device = dhResponse.getData();        
+        }
+//Sending of the notifications
+device.sendNotification(String notificationName, List<Parameter> params);
+```
+
+
 
 DeviceHive license
 ------------------
