@@ -6,7 +6,7 @@ DeviceHive Android Example
 
 DeviceHive Android Example demostrates the usage of [DeviceHive Java Library](https://github.com/devicehive/devicehive-java) inside Android Application. [DeviceHive Java Library](https://github.com/devicehive/devicehive-java) could be easily [implemented](https://github.com/devicehive/devicehive-java#download) into any Android Project. It supports Android Applications for tablets and phones, Android Wear and Android Things. 
 
-This Android Application is showing how easily you can register the new Device and start sending any data to the server. For an example we are sending current Location.
+This Android Application is showing how easily you can register a new Device or get the existing and start sending any data to the server. For an example we are sending current Location.
 
 ```java
 //Creating DeviceHive Instance
@@ -34,3 +34,4 @@ modified sources back to Open Source, but if you feel like sharing, you are
 highly encouraged to do so!
 
 &copy; Copyright 2017 DataArt Apps &copy; All Rights Reserved
+
