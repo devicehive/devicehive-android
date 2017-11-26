@@ -1,4 +1,4 @@
-DeviceHive Android framework
+DeviceHive Android Example
 =========================
 
 [DeviceHive]: http://devicehive.com "DeviceHive framework"
