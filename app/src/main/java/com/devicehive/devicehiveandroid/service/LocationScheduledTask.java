@@ -29,7 +29,6 @@ import com.devicehive.devicehiveandroid.service.model.LocationParam;
 import com.devicehive.devicehiveandroid.utils.PreferencesHelper;
 import com.github.devicehive.client.model.DHResponse;
 import com.github.devicehive.client.model.Parameter;
-import com.github.devicehive.client.model.TokenAuth;
 import com.github.devicehive.client.service.Device;
 import com.github.devicehive.client.service.DeviceHive;
 import com.google.android.gms.gcm.GcmNetworkManager;
@@ -127,7 +126,7 @@ public class LocationScheduledTask extends GcmTaskService {
 
         if (deviceHive == null) {
             deviceHive = DeviceHive.getInstance().init(serverUrl,
-                    new TokenAuth(refreshToken.trim()));
+                  refreshToken.trim());
         }
     }
 
